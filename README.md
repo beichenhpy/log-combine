@@ -1,6 +1,7 @@
 # log-combine
 for combine log printing
 
+**NOW NOT SUPPORT MULTI THREAD**
 
 ## A tool for combined log printing in one method.
 
@@ -22,9 +23,6 @@ you can see `log-combine-sample`, this is a simple example.
   public void test(){
     // do something
     LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
-    new Thread(
-      ()->LogCombineHelper.info("and even in a new Thread, is  {} ,try it, more params:{}", "ok",1)
-    ).start();
   }
 
 ```
