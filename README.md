@@ -1,7 +1,7 @@
 # log-combine
 for combine log printing
 
-**NOW NOT SUPPORT MULTI THREAD**
+**NOW NOT SUPPORT ASYNC NON-BLOCKING THREAD**
 
 ## A tool for combined log printing in one method.
 

@@ -7,6 +7,9 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
+import javax.annotation.Resource;
+import java.util.concurrent.Executor;
+
 /**
  * 日志合并打印切面
  * CREATE_TIME: 2022/4/23 16:28
@@ -18,6 +21,8 @@ import org.aspectj.lang.annotation.Pointcut;
 @Slf4j
 public class LogCombinePrintAspect {
 
+    @Resource(name = "logThreadPoolExecutor")
+    private Executor logThreadPoolExecutor;
 
     @Pointcut(value = "@annotation(cn.beichenhpy.log.annotation.LogCombine)")
     public void pointCut() {
@@ -27,14 +32,17 @@ public class LogCombinePrintAspect {
     @After(value = "pointCut()")
     public void logPrint() {
         LogCombineContext context = LogCombineContext.getContext();
-        try {
-            LogInfo localLogStorage = context.getLogLocalStorage();
-            log.info("[combine-log have generate]" + localLogStorage.getFormat(), localLogStorage.getParams());
-        } catch (Throwable e) {
-            log.error("error:{},{}", e.getMessage(), e);
-        } finally {
-            context.clear();
-        }
-
+        LogInfo localLogStorage = context.getLogLocalStorage();
+        logThreadPoolExecutor.execute(
+                () -> {
+                    try {
+                        log.info("[combine-log have generate]" + localLogStorage.getFormat(), localLogStorage.getParams());
+                    } catch (Throwable e) {
+                        log.error("error:{},{}", e.getMessage(), e);
+                    } finally {
+                        context.clear();
+                    }
+                }
+        );
     }
 }
