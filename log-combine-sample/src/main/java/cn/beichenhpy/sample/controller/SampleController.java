@@ -2,6 +2,7 @@ package cn.beichenhpy.sample.controller;
 
 import cn.beichenhpy.log.annotation.LogCombine;
 import cn.beichenhpy.log.context.LogCombineHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author beichenhpy
  * @version 1.0.0
  */
+@Slf4j
 @RestController
 public class SampleController {
 
@@ -21,11 +23,7 @@ public class SampleController {
     @LogCombine
     @GetMapping("/1")
     public void test() {
-        String className = Thread.currentThread().getStackTrace()[1].getClassName();
-        System.out.println(className);
         LogCombineHelper.info("测试:{},{}", 1, 2);
-        new Thread(
-                () -> LogCombineHelper.info("测试2:{},{}", 3, 4)
-        ).start();
+        LogCombineHelper.debug("测试2:{},{}", 3, 4);
     }
 }
