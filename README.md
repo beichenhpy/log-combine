@@ -5,6 +5,7 @@ for combine log printing
 ## A tool for combined log printing in one method.
 
 ## how to use
+you can see `log-combine-sample`, this is a simple example.
 1. add dependence to your pom
 ```xml
         <dependency>
