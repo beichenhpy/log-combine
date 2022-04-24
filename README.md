@@ -1,7 +1,13 @@
 # log-combine
-for combine log printing
+
 
 **NOW NOT SUPPORT ASYNC NON-BLOCKING THREAD**
+
+**WARNING**  
+if you use `LogCombineHelper` in non-blocking thread like  `runnable`  
+it maybe effects "ghost log", because a non-blocking thread method can not be controlled.
+
+
 
 ## A tool for combined log printing in one method.
 
