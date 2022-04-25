@@ -2,11 +2,11 @@ package cn.beichenhpy.log.context;
 
 import cn.beichenhpy.log.entity.LogInfo;
 import cn.beichenhpy.log.enums.LogLevel;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,22 +20,6 @@ public class LogCombineContext {
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
     private final ThreadLocal<LogInfo> LogLocalStorage = new InheritableThreadLocal<>();
-
-    /**
-     * 获取缩略包名
-     *
-     * @param className 源类名
-     * @return 缩略后的类名
-     */
-    private static String getAbbreviateClassName(String className) {
-        List<String> srcList = Arrays.asList(className.split("\\."));
-        List<String> dstList = new LinkedList<>();
-        srcList.stream()
-                .limit(srcList.size() - 1L)
-                .forEach(item -> dstList.add(item.substring(0, 1)));
-        dstList.add(srcList.get(srcList.size() - 1));
-        return String.join(".", dstList);
-    }
 
     /**
      * 获取上下文 内部类懒加载
@@ -59,22 +43,23 @@ public class LogCombineContext {
     public void addLog(String msg, Integer line, LogLevel level, String className, String threadName, Object... param) {
         LocalDateTime now = LocalDateTime.now();
         String time = dateTimeFormatter.format(now);
-        String logMsg = String.format("\n%s - [%s] %s %s - [%s] - %s", time, threadName, level, getAbbreviateClassName(className), line, msg);
+        String logMsg = String.format("\n%s - [%s] %s %s - [%s] - %s", time, threadName, level, className, line, msg);
+        String message = MessageFormatter.arrayFormat(logMsg, param).getMessage();
         LogInfo logInfo = LogLocalStorage.get();
-        if (logInfo == null) {
-            logInfo = new LogInfo(logMsg, param);
+        if (logInfo != null) {
+            List<String> messages = logInfo.getMessages();
+            messages.add(message);
+            logInfo.setMessages(messages);
         } else {
-            logInfo.setFormat(logInfo.getFormat() + logMsg);
-            Object[] originParams = logInfo.getParams();
-            int newParamLength = param.length;
-            int originParamsLength = originParams.length;
-            int combineParamsLength = originParamsLength + newParamLength;
-            //组合变量
-            Object[] combineParams = new Object[combineParamsLength];
-            System.arraycopy(originParams, 0, combineParams, 0, originParamsLength);
-            System.arraycopy(param, 0, combineParams, originParamsLength, newParamLength);
-            logInfo.setParams(combineParams);
+            List<String> messages = new ArrayList<>();
+            messages.add(message);
+            logInfo = new LogInfo(messages, 0);
         }
+        LogLocalStorage.set(logInfo);
+    }
+
+
+    public void setLogLocalStorage(LogInfo logInfo) {
         LogLocalStorage.set(logInfo);
     }
 

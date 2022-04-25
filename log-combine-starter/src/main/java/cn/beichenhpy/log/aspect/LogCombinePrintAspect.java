@@ -2,11 +2,15 @@ package cn.beichenhpy.log.aspect;
 
 import cn.beichenhpy.log.context.LogCombineContext;
 import cn.beichenhpy.log.entity.LogInfo;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 /**
  * 日志合并打印切面
@@ -27,16 +31,35 @@ public class LogCombinePrintAspect {
 
     }
 
+    @Before(value = "pointCut()")
+    public void preLog(JoinPoint joinPoint) {
+        LogCombineContext context = LogCombineContext.getContext();
+        LogInfo localLogStorage = context.getLogLocalStorage();
+        if (localLogStorage == null) {
+            //init
+            localLogStorage = new LogInfo(new ArrayList<>(), 0);
+        }
+        //入栈
+        localLogStorage.setNestedFloor(localLogStorage.getNestedFloor() + 1);
+        context.setLogLocalStorage(localLogStorage);
+    }
+
     @After(value = "pointCut()")
-    public void logPrint() {
+    public void logPrint(JoinPoint joinPoint) {
+        String name = joinPoint.getTarget().getClass().getName();
         LogCombineContext context = LogCombineContext.getContext();
         LogInfo localLogStorage = context.getLogLocalStorage();
         try {
-            logger.info(localLogStorage.getFormat(), localLogStorage.getParams());
+            //出栈
+            localLogStorage.setNestedFloor(localLogStorage.getNestedFloor() - 1);
+            String realLog = String.join("", localLogStorage.getMessages());
+            logger.info("{}", realLog);
         } catch (Throwable e) {
             logger.error("error:{},{}", e.getMessage(), e);
         } finally {
-            context.clear();
+            if (localLogStorage.getNestedFloor() == 0) {
+                context.clear();
+            }
         }
     }
 }

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * <PRE>
  * 日志信息
@@ -19,12 +21,12 @@ import lombok.NoArgsConstructor;
 public class LogInfo {
 
     /**
-     * 输入的日志信息及占位符
+     * 消息列表
      */
-    private String format;
+    private List<String> messages;
 
     /**
-     * 输入的参数
+     * 递归层数
      */
-    private Object[] params;
+    private int nestedFloor;
 }
