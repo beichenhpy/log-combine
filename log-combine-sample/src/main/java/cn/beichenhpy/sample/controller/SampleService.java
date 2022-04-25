@@ -16,7 +16,13 @@ import org.springframework.stereotype.Service;
 public class SampleService {
 
     @LogCombine
-    public void test2(){
+    public void test2() {
         LogCombineHelper.info("service:{}", 2);
+        test3();
+    }
+
+
+    private void test3() {
+        LogCombineHelper.debug("test3:{}", "test333");
     }
 }
