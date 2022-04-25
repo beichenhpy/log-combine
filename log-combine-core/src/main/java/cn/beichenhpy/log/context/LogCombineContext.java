@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 public class LogCombineContext {
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
-    private final ThreadLocal<LogInfo> LogLocalStorage = new InheritableThreadLocal<>();
+    private final ThreadLocal<LogInfo> logLocalStorage = new InheritableThreadLocal<>();
 
     /**
      * 获取上下文 内部类懒加载
@@ -43,25 +43,14 @@ public class LogCombineContext {
         String time = dateTimeFormatter.format(now);
         String logMsg = String.format("\n%s - [%s] %s %s - [%s] - %s", time, threadName, level, className, line, msg);
         String message = MessageFormatter.arrayFormat(logMsg, param).getMessage();
-        LogInfo logInfo = LogLocalStorage.get();
-        if (logInfo != null) {
-            String originMessage = logInfo.getMessage();
-            if (originMessage != null) {
-                logInfo.setMessage(originMessage + message);
-            }
-        } else {
+        LogInfo logInfo = getLogLocalStorage();
+        if (logInfo == null) {
             logInfo = new LogInfo(message, 0);
+        } else {
+            String originMessage = logInfo.getMessage();
+            logInfo.setMessage(originMessage + message);
         }
         setLogLocalStorage(logInfo);
-    }
-
-    /**
-     * 设置日志信息到上下文
-     *
-     * @param logInfo 日志信息
-     */
-    public void setLogLocalStorage(LogInfo logInfo) {
-        LogLocalStorage.set(logInfo);
     }
 
     /**
@@ -70,14 +59,77 @@ public class LogCombineContext {
      * @return 返回日志信息
      */
     public LogInfo getLogLocalStorage() {
-        return LogLocalStorage.get();
+        return logLocalStorage.get();
+    }
+
+    /**
+     * 设置日志信息到上下文
+     *
+     * @param logInfo 日志信息
+     */
+    public void setLogLocalStorage(LogInfo logInfo) {
+        logLocalStorage.set(logInfo);
+    }
+
+    /**
+     * 获取储存的日志信息
+     *
+     * @param immediatelyClear 立即清理
+     * @return 返回日志
+     */
+    public String getLog(boolean immediatelyClear) {
+        String message = null;
+        LogInfo logInfo = getLogLocalStorage();
+        if (logInfo != null) {
+            message = logInfo.getMessage();
+        }
+        //是否需要立即清理
+        if (immediatelyClear) {
+            clear();
+        }
+        return message;
+    }
+
+    /**
+     * 获取日志不清理ThreadLocal
+     *
+     * @return 返回日志信息
+     */
+    public String getLog() {
+        return getLog(false);
     }
 
     /**
      * 清除内容
      */
     public void clear() {
-        LogLocalStorage.remove();
+        logLocalStorage.remove();
+    }
+
+
+    /**
+     * 脱离一层嵌套
+     */
+    public void popNest() {
+        LogInfo logLocalStorage = getLogLocalStorage();
+        logLocalStorage.setNestedFloor(logLocalStorage.getNestedFloor() - 1);
+    }
+
+    /**
+     * 进入一层嵌套
+     */
+    public void pushNest() {
+        LogInfo logLocalStorage = getLogLocalStorage();
+        logLocalStorage.setNestedFloor(logLocalStorage.getNestedFloor() + 1);
+    }
+
+    /**
+     * 获取当前嵌套层数
+     *
+     * @return -1 当前未初始化  否则返回层数
+     */
+    public int getCurrentNest() {
+        return getLogLocalStorage() == null ? -1 : getLogLocalStorage().getNestedFloor();
     }
 
     private static class LogCombineContextHolder {

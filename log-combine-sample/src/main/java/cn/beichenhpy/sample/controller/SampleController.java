@@ -33,7 +33,6 @@ public class SampleController {
     public void test() throws ExecutionException, InterruptedException {
         LogCombineHelper.info("test:{},{}", 1, 2);
         LogCombineHelper.debug("test2:{},{}", 3, 4);
-        //[NOT SUPPORT] @LogCombine is nested, AOP will run inner first
         sampleService.test2();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         //[NOT SUPPORT] can not record log to context, because This operation is asynchronous and non-blocking. AOP can't wait.
