@@ -1,9 +1,7 @@
 # log-combine
 
 
-NOW **NOT SUPPORT** ASYNC NON-BLOCKING THREAD 
-
-NOW **NOT SUPPORT** NESTED `@LogCombine` 
+NOW **NOT SUPPORT** ASYNC NON-BLOCKING THREAD
 
 **WARNING**  
 if you use `LogCombineHelper` in non-blocking thread like  `runnable`  
@@ -12,7 +10,6 @@ it maybe effects "ghost log", because a non-blocking thread method can not be co
 
 不支持非阻塞的多线程,如实现了Runnable的线程执行，使用后会导致日志混乱，出现脏日志。
 
-暂时支持嵌套，但内部嵌套日志会带出前面的日志，正在想办法处理。。。
 
 ## A tool for combined log printing in one method.
 

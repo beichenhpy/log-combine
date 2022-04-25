@@ -52,12 +52,12 @@ public class LogCombinePrintAspect {
         try {
             //出栈
             localLogStorage.setNestedFloor(localLogStorage.getNestedFloor() - 1);
-            String realLog = String.join("", localLogStorage.getMessages());
-            logger.info("{}", realLog);
         } catch (Throwable e) {
             logger.error("error:{},{}", e.getMessage(), e);
         } finally {
             if (localLogStorage.getNestedFloor() == 0) {
+                String realLog = String.join("", localLogStorage.getMessages());
+                logger.info("{}", realLog);
                 context.clear();
             }
         }
