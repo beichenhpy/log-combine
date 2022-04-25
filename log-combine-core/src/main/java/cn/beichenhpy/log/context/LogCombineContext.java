@@ -6,11 +6,9 @@ import org.slf4j.helpers.MessageFormatter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * 日志上下文
+ * Context for log combine
  * CREATE_TIME: 2022/4/23 15:51
  *
  * @author beichenhpy
@@ -47,18 +45,21 @@ public class LogCombineContext {
         String message = MessageFormatter.arrayFormat(logMsg, param).getMessage();
         LogInfo logInfo = LogLocalStorage.get();
         if (logInfo != null) {
-            List<String> messages = logInfo.getMessages();
-            messages.add(message);
-            logInfo.setMessages(messages);
+            String originMessage = logInfo.getMessage();
+            if (originMessage != null) {
+                logInfo.setMessage(originMessage + message);
+            }
         } else {
-            List<String> messages = new ArrayList<>();
-            messages.add(message);
-            logInfo = new LogInfo(messages, 0);
+            logInfo = new LogInfo(message, 0);
         }
-        LogLocalStorage.set(logInfo);
+        setLogLocalStorage(logInfo);
     }
 
-
+    /**
+     * 设置日志信息到上下文
+     *
+     * @param logInfo 日志信息
+     */
     public void setLogLocalStorage(LogInfo logInfo) {
         LogLocalStorage.set(logInfo);
     }

@@ -10,8 +10,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-
 /**
  * 日志合并打印切面
  * CREATE_TIME: 2022/4/23 16:28
@@ -37,7 +35,7 @@ public class LogCombinePrintAspect {
         LogInfo localLogStorage = context.getLogLocalStorage();
         if (localLogStorage == null) {
             //init
-            localLogStorage = new LogInfo(new ArrayList<>(), 0);
+            localLogStorage = new LogInfo("", 0);
         }
         //入栈
         localLogStorage.setNestedFloor(localLogStorage.getNestedFloor() + 1);
@@ -56,8 +54,7 @@ public class LogCombinePrintAspect {
             logger.error("error:{},{}", e.getMessage(), e);
         } finally {
             if (localLogStorage.getNestedFloor() == 0) {
-                String realLog = String.join("", localLogStorage.getMessages());
-                logger.info("{}", realLog);
+                logger.info("{}", localLogStorage.getMessage());
                 context.clear();
             }
         }

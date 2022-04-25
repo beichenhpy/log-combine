@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 /**
  * <PRE>
  * 日志信息
@@ -21,9 +19,9 @@ import java.util.List;
 public class LogInfo {
 
     /**
-     * 消息列表
+     * 消息
      */
-    private List<String> messages;
+    private String message;
 
     /**
      * 递归层数
