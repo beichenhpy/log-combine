@@ -45,11 +45,18 @@ public class LogCombineContext {
         String message = MessageFormatter.arrayFormat(logMsg, param).getMessage();
         LogInfo logInfo = getLogLocalStorage();
         if (logInfo == null) {
-            logInfo = new LogInfo(message, 0);
+            initContext(message);
         } else {
             String originMessage = logInfo.getMessage();
             logInfo.setMessage(originMessage + message);
         }
+    }
+
+    /**
+     * 初始化上下文
+     */
+    public void initContext(String message) {
+        LogInfo logInfo = new LogInfo(message, 0);
         setLogLocalStorage(logInfo);
     }
 

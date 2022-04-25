@@ -34,8 +34,7 @@ public class LogCombinePrintAspect {
         LogInfo localLogStorage = context.getLogLocalStorage();
         if (localLogStorage == null) {
             //init
-            localLogStorage = new LogInfo("", 0);
-            context.setLogLocalStorage(localLogStorage);
+            context.initContext("");
         }
         //入嵌套
         context.pushNest();
