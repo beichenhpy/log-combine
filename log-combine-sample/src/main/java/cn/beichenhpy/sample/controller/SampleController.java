@@ -29,7 +29,7 @@ public class SampleController {
     private SampleService sampleService;
 
     @LogCombine
-    @GetMapping("/1")
+    @GetMapping("/spring")
     public void test() throws ExecutionException, InterruptedException {
         LogCombineHelper.info("test:{},{}", 1, 2);
         LogCombineHelper.debug("test2:{},{}", 3, 4);
@@ -44,5 +44,26 @@ public class SampleController {
                 () -> LogCombineHelper.debug("test3:{}", 5)
         );
         task.get();
+    }
+
+
+    @GetMapping("/noSpring")
+    public void test2() throws ExecutionException, InterruptedException {
+        LogCombineHelper.info("test:{},{}", 1, 2);
+        LogCombineHelper.debug("test2:{},{}", 3, 4);
+        //no LogCombine nested
+        sampleService.test3();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        //[NOT SUPPORT] can not record log to context, because This operation is asynchronous and non-blocking. AOP can't wait.
+        executorService.execute(
+                () -> LogCombineHelper.debug("test3:{}", 5)
+        );
+        //but if you use submit and get result ,it works.
+        Future<?> task = executorService.submit(
+                () -> LogCombineHelper.debug("test3:{}", 5)
+        );
+        task.get();
+        //manual print
+        LogCombineHelper.print();
     }
 }

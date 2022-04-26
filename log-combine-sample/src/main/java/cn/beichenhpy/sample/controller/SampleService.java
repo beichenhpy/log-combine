@@ -22,7 +22,7 @@ public class SampleService {
     }
 
 
-    private void test3() {
+    public void test3() {
         LogCombineHelper.debug("test3:{}", "test333");
     }
 }

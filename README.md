@@ -1,38 +1,72 @@
 # log-combine
 
+现在 **不支持非阻塞异步线程**
 
-NOW **NOT SUPPORT** ASYNC NON-BLOCKING THREAD
+**⚠️警告**  
+如果你使用了 `LogCombineHelper` 在一个非阻塞的线程中如实现了  `runnable` 接口的类 可能会导致【脏日志】， 因为一个异步非阻塞线程不可控。
 
-**WARNING**  
-if you use `LogCombineHelper` in non-blocking thread like  `runnable`  
-it maybe effects "ghost log", because a non-blocking thread method can not be controlled.
+## 一个用于合并打印日志的工具包
 
+**注意！**  
+不要混用以下的两种打印日志的方式，不然会有意外的错误发生。如果你使用spring相关  
+starter包中的aop会自动帮你打印日志，前提是在方法上添加了`@LogConbime`注解。
 
-不支持非阻塞的多线程,如实现了Runnable的线程执行，使用后会导致日志混乱，出现脏日志。
+## 使用方式
 
+你可以参考 `log-combine-sample`,这个项目是一个简单的实现。
 
-## A tool for combined log printing in one method.
+### 如果你不使用Spring框架
 
-## how to use
-you can see `log-combine-sample`, this is a simple example.
-1. add dependence to your pom
+1. 添加依赖到pom
+
 ```xml
-        <dependency>
-            <groupId>cn.beichenhpy</groupId>
-            <artifactId>log-combine-starter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+
+<dependency>
+    <groupId>cn.beichenhpy</groupId>
+    <artifactId>log-combine-core</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
 ```
-2. add `@EnableLogCombine` to your application Entrance
-3. add `@LogCombine` on your method and use `LogCombineHelper` to add log info
+
+2. 在方法中使用 `LogCombineHelper.info/error/..` 并且用 `LogCombineHelper.print`打印日志。
+
 ```java
-  
-  class Test{
-      @LogCombine
-      public void test(){
-          // do something
-          LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
-      }
-  }
+
+class Test {
+    public void test() {
+        // do something
+        LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
+        //print your logs
+        LogCombineHelper.print();
+    }
+}
+
+```
+
+### 如果你使用Spring框架
+
+1. 添加到你的依赖
+
+```xml
+
+<dependency>
+    <groupId>cn.beichenhpy</groupId>
+    <artifactId>log-combine-starter</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+```
+
+2. 在程序入口添加 `@EnableLogCombine` 注解
+3. 在你要合并打印的方法上添加 `@LogCombine` 然后使用 `LogCombineHelper` 的静态方法添加日志
+
+```java
+
+class Test {
+    @LogCombine
+    public void test() {
+        // do something
+        LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
+    }
+}
 
 ```

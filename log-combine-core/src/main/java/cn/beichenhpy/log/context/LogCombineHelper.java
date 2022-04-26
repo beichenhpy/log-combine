@@ -1,6 +1,7 @@
 package cn.beichenhpy.log.context;
 
 import cn.beichenhpy.log.enums.LogLevel;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 日志合并打印工具类,使用方式
@@ -16,6 +17,7 @@ import cn.beichenhpy.log.enums.LogLevel;
  * @author beichenhpy
  * @version 1.0.0
  */
+@Slf4j(topic = "combine-log have generated")
 public class LogCombineHelper {
 
     /**
@@ -98,5 +100,13 @@ public class LogCombineHelper {
      */
     public static void trace(String msg, Object... param) {
         context.addLog(msg, getInvokeLineNumber(), LogLevel.TRACE, getInvokeClassName(), getThreadName(), param);
+    }
+
+
+    /**
+     * 打印日志
+     */
+    public static void print() {
+        log.info("{}", context.getLog(true));
     }
 }
