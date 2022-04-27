@@ -107,6 +107,9 @@ public class LogCombineHelper {
      * 打印日志
      */
     public static void print() {
-        log.info("{}", context.getLog(true));
+        String log = context.getLog(true);
+        if (log != null) {
+            LogCombineHelper.log.info("{}", log);
+        }
     }
 }

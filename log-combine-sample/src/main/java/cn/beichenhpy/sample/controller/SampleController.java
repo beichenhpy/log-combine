@@ -47,7 +47,7 @@ public class SampleController {
     }
 
 
-    @GetMapping("/noSpring")
+    @GetMapping("/no-spring")
     public void test2() throws ExecutionException, InterruptedException {
         LogCombineHelper.info("test:{},{}", 1, 2);
         LogCombineHelper.debug("test2:{},{}", 3, 4);

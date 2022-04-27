@@ -1,6 +1,7 @@
 package cn.beichenhpy.log.aspect;
 
 import cn.beichenhpy.log.context.LogCombineContext;
+import cn.beichenhpy.log.context.LogCombineHelper;
 import cn.beichenhpy.log.entity.LogInfo;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -34,7 +35,7 @@ public class LogCombinePrintAspect {
         LogInfo localLogStorage = context.getLogLocalStorage();
         if (localLogStorage == null) {
             //init
-            context.initContext("");
+            context.initContext("\n--------------------------Spring Aop AutoLog Called--------------------------");
         }
         //入嵌套
         context.pushNest();
@@ -50,7 +51,7 @@ public class LogCombinePrintAspect {
             logger.error("error:{},{}", e.getMessage(), e);
         } finally {
             if (context.getCurrentNest() == 0) {
-                logger.info("{}", context.getLog(true));
+                LogCombineHelper.print();
             }
         }
     }
