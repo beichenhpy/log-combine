@@ -54,27 +54,26 @@ class Test {
 
 ```java
 class Test2 {
-    @GetMapping("/no-spring")
-    @SneakyThrows
-    public void test2() {
-        LogCombineHelper.info("test:{},{}", 1, 2);
-        LogCombineHelper.debug("test2:{},{}", 3, 4);
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        executorService.execute(
-                () -> {
-                    LogCombineHelper.debug("test3:{}", 5);
-                    try {
-                        Thread.sleep(4000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    //手动调用打印方法
-                    LogCombineHelper.print();
-                }
-        );
-        //手动打印
-        LogCombineHelper.print();
-    }
+
+   @SneakyThrows
+   public void test2() {
+      LogCombineHelper.info("test:{},{}", 1, 2);
+      LogCombineHelper.debug("test2:{},{}", 3, 4);
+      new Thread(
+              () -> {
+                 LogCombineHelper.debug("test3:{}", 5);
+                 try {
+                    Thread.sleep(4000);
+                 } catch (InterruptedException e) {
+                    e.printStackTrace();
+                 }
+                 //手动调用打印方法
+                 LogCombineHelper.print();
+              }
+      ).start();
+      //手动打印
+      LogCombineHelper.print();
+   }
 }
 ```
 
