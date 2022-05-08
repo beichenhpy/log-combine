@@ -35,11 +35,11 @@ public class SampleService {
     @LogCombine
     public void test2() {
         LogCombineHelper.info("service:{}", 2);
-        test3();
     }
 
 
     public void test3() {
-        LogCombineHelper.debug("test3:{}", "test333");
+        LogCombineHelper.info("test3:{}", "test333");
+        LogCombineHelper.print();
     }
 }

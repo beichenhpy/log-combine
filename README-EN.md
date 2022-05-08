@@ -12,6 +12,8 @@ The print result is as follows:
 2022-05-08 10:50:02,314 - [pool-4-thread-1] DEBUG cn.beichenhpy.sample.controller.SampleController - [79] - test3:5
 ```
 
+【notice】 📢:`LogCombineHelper.pushNest()`and`LogCombineHelper.popNest()`can not mixed `@LogCombine`
+
 【feature】
 
 1. Supports merge printing of logs for asynchronous threads
@@ -44,17 +46,56 @@ you can see `log-combine-sample`, this is a simple example.
 ```java
 
 class Test {
-    public void test() {
-        // do something
-        LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
-        //print your logs
-        LogCombineHelper.print();
-    }
+   public void test() {
+      // do something
+      LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
+      //print your logs
+      LogCombineHelper.print();
+   }
 }
 
 ```
 
-3. 【new】If you want to use it in a non-blocking thread, call it manually in the method of the non-blocking thread
+3. if you nest `LogCombineHelper.print()`, then you need use `LogCombineHelper.pushNest()`
+   and `LogCombineHelper.popNest()`
+
+example：
+
+```java
+class Test0 {
+   @SneakyThrows
+   public void test2() {
+      LogCombineHelper.info("test:{},{}", 1, 2);
+      LogCombineHelper.warn("test2:{},{}", 3, 4);
+      //nest
+      LogCombineHelper.pushNest();
+      sampleService.test3();
+      LogCombineHelper.popNest();
+      ExecutorService executorService = Executors.newFixedThreadPool(10);
+      //support but you need to manual print
+      executorService.execute(
+              () -> {
+                 LogCombineHelper.warn("test3:{}", 5);
+                 try {
+                    Thread.sleep(4000);
+                 } catch (InterruptedException e) {
+                    e.printStackTrace();
+                 }
+                 //There is nesting here, if you call the pushNest method before the method and then call popNest, 
+                 // it will cause the after nest print log to split
+                 LogCombineHelper.pushNest();
+                 sampleService.test3();
+                 LogCombineHelper.popNest();
+                 LogCombineHelper.info("after nest print:{}", "after");
+                 LogCombineHelper.print();
+              }
+      );
+      LogCombineHelper.print();
+   }
+}
+```
+
+4. 【new】If you want to use it in a non-blocking thread, call it manually in the method of the non-blocking thread
    `LogCombineHelper.print()` to Implement log combine printing。
 
 ```java

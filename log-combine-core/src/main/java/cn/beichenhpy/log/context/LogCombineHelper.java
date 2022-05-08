@@ -143,23 +143,51 @@ public class LogCombineHelper {
         context.addLog(msg, getInvokeLineNumber(), LogLevel.ERROR, getInvokeClassName(), getThreadName(), param);
     }
 
+    /**
+     * 脱离一层嵌套
+     */
+    public static void popNest() {
+        context.getLogLocalStorage().setNestedFloor(context.getLogLocalStorage().getNestedFloor() - 1);
+    }
+
+    /**
+     * 进入一层嵌套
+     */
+    public static void pushNest() {
+        if (context.getLogLocalStorage() == null) {
+            //init
+            context.initContext(null);
+        }
+        context.getLogLocalStorage().setNestedFloor(context.getLogLocalStorage().getNestedFloor() + 1);
+    }
+
+    /**
+     * 获取当前嵌套层数
+     *
+     * @return -1 当前未初始化  否则返回层数
+     */
+    public static int getCurrentNest() {
+        return context.getLogLocalStorage() == null ? -1 : context.getLogLocalStorage().getNestedFloor();
+    }
 
     /**
      * 打印日志
      */
     public static void print() {
-        String logMsg = context.getLog(true);
-        if (logMsg != null) {
-            if (log.isTraceEnabled()) {
-                log.trace("{}", logMsg);
-            } else if (log.isDebugEnabled()) {
-                log.debug("{}", logMsg);
-            } else if (log.isInfoEnabled()) {
-                log.info("{}", logMsg);
-            } else if (log.isWarnEnabled()) {
-                log.warn("{}", logMsg);
-            } else if (log.isErrorEnabled()) {
-                log.error("{}", logMsg);
+        if (getCurrentNest() == 0) {
+            String logMsg = context.getLog(true);
+            if (logMsg != null) {
+                if (log.isTraceEnabled()) {
+                    log.trace("{}", logMsg);
+                } else if (log.isDebugEnabled()) {
+                    log.debug("{}", logMsg);
+                } else if (log.isInfoEnabled()) {
+                    log.info("{}", logMsg);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("{}", logMsg);
+                } else if (log.isErrorEnabled()) {
+                    log.error("{}", logMsg);
+                }
             }
         }
     }

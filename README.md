@@ -11,6 +11,7 @@
 2022-05-08 10:50:06.318  INFO 20390 --- [pool-4-thread-1] c.b.log.context.LogCombineHelper : 
 2022-05-08 10:50:02,314 - [pool-4-thread-1] DEBUG cn.beichenhpy.sample.controller.SampleController - [79] - test3:5
 ```
+【注意】 📢:`LogCombineHelper.pushNest()`和`LogCombineHelper.popNest()`不可以与`@LogCombine`混用
 
 【feature】
 
@@ -45,17 +46,54 @@ starter包中的aop会自动帮你打印日志，前提是在方法上添加了`
 ```java
 
 class Test {
-    public void test() {
-        // do something
-        LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
-        //print your logs
-        LogCombineHelper.print();
-    }
+   public void test() {
+      // do something
+      LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
+      //print your logs
+      LogCombineHelper.print();
+   }
 }
 
 ```
 
-3. 【new】如果你想在异步线程中使用，请手动在异步线程的方法中调用 `LogCombineHelper.print()` 以实现异步线程的打印。
+3. 如果遇到嵌套时，嵌套的内部方法也使用了`LogCombineHelper.print()`那么需要使用`LogCombineHelper.pushNest()`和`LogCombineHelper.popNest()`
+   例子：
+
+```java
+class Test0 {
+   @SneakyThrows
+   public void test2() {
+      LogCombineHelper.info("test:{},{}", 1, 2);
+      LogCombineHelper.warn("test2:{},{}", 3, 4);
+      //嵌套 手动调用
+      LogCombineHelper.pushNest();
+      sampleService.test3();
+      LogCombineHelper.popNest();
+      ExecutorService executorService = Executors.newFixedThreadPool(10);
+      //support but you need to manual print
+      executorService.execute(
+              () -> {
+                 LogCombineHelper.warn("test3:{}", 5);
+                 try {
+                    Thread.sleep(4000);
+                 } catch (InterruptedException e) {
+                    e.printStackTrace();
+                 }
+                 //这里出现嵌套，如果在方法前调用pushNest 方法后调用popNest的话，
+                 // 会导致after nest print 这个日志割裂
+                 LogCombineHelper.pushNest();
+                 sampleService.test3();
+                 LogCombineHelper.popNest();
+                 LogCombineHelper.info("after nest print:{}", "after");
+                 LogCombineHelper.print();
+              }
+      );
+      LogCombineHelper.print();
+   }
+}
+```
+
+4. 【new】如果你想在异步线程中使用，请手动在异步线程的方法中调用 `LogCombineHelper.print()` 以实现异步线程的打印。
 
 ```java
 class Test2 {

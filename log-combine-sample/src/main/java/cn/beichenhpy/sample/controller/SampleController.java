@@ -51,6 +51,7 @@ public class SampleController {
     public void test() throws ExecutionException, InterruptedException {
         LogCombineHelper.debug("test:{},{}", 1, 2);
         LogCombineHelper.warn("test2:{},{}", 3, 4);
+        //nest
         sampleService.test2();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         //support but you need to manual print or use method with @LogCombine
@@ -77,8 +78,10 @@ public class SampleController {
     public void test2() {
         LogCombineHelper.info("test:{},{}", 1, 2);
         LogCombineHelper.warn("test2:{},{}", 3, 4);
-        //no LogCombine nested
+        //LogCombine nested
+        LogCombineHelper.pushNest();
         sampleService.test3();
+        LogCombineHelper.popNest();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         //support but you need to manual print
         executorService.execute(
@@ -89,6 +92,10 @@ public class SampleController {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    LogCombineHelper.pushNest();
+                    sampleService.test3();
+                    LogCombineHelper.popNest();
+                    LogCombineHelper.info("after nest print:{}", "after");
                     LogCombineHelper.print();
                 }
         );

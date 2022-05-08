@@ -17,13 +17,13 @@
 
 package cn.beichenhpy.log.aspect;
 
-import cn.beichenhpy.log.context.LogCombineContext;
-import cn.beichenhpy.log.context.LogCombineHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+
+import static cn.beichenhpy.log.context.LogCombineHelper.*;
 
 /**
  * 日志合并打印切面
@@ -35,36 +35,6 @@ import org.aspectj.lang.annotation.Pointcut;
 @Slf4j
 @Aspect
 public class LogCombinePrintAspect {
-
-
-    private static final LogCombineContext context = LogCombineContext.getContext();
-
-    /**
-     * 脱离一层嵌套
-     */
-    public void popNest() {
-        context.getLogLocalStorage().setNestedFloor(context.getLogLocalStorage().getNestedFloor() - 1);
-    }
-
-    /**
-     * 进入一层嵌套
-     */
-    public void pushNest() {
-        if (context.getLogLocalStorage() == null) {
-            //init
-            context.initContext(null);
-        }
-        context.getLogLocalStorage().setNestedFloor(context.getLogLocalStorage().getNestedFloor() + 1);
-    }
-
-    /**
-     * 获取当前嵌套层数
-     *
-     * @return -1 当前未初始化  否则返回层数
-     */
-    public int getCurrentNest() {
-        return context.getLogLocalStorage() == null ? -1 : context.getLogLocalStorage().getNestedFloor();
-    }
 
 
     @Pointcut(value = "@annotation(cn.beichenhpy.log.annotation.LogCombine)")
@@ -84,9 +54,7 @@ public class LogCombinePrintAspect {
         } catch (Throwable e) {
             log.error("error:{},{}", e.getMessage(), e);
         } finally {
-            if (getCurrentNest() == 0) {
-                LogCombineHelper.print();
-            }
+            print();
         }
     }
 }
