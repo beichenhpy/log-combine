@@ -57,6 +57,13 @@ public class SampleController {
         executorService.execute(
                 () -> sampleService.test2()
         );
+        executorService.execute(
+                //直接调用
+                () -> {
+                    LogCombineHelper.info("service:{}", "direct invoke");
+                    LogCombineHelper.print();
+                }
+        );
         //but if you use submit and get result ,it works.
         Future<?> task = executorService.submit(
                 () -> LogCombineHelper.debug("test3:{}", 5)

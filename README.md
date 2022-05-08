@@ -106,8 +106,8 @@ class Test {
 
 ```
 
-4. 【new】如果你想在异步线程中使用，请手动在异步线程的方法中调用 `LogCombineHelper.print()` 以实现异步线程的打印。  
-   或者你可以像调用方法一样正常使用，前提是需要在方法上添加 `@LogCombine`注解。
+4. 【new】如果你想在异步线程中使用，请手动在异步线程的方法中调用 `LogCombineHelper.print()` 以实现异步线程的打印 或者你可以像调用方法一样正常使用，前提是需要在方法上添加 `@LogCombine`
+   注解。【两者不能混用】
 
 ```java
 
@@ -124,13 +124,21 @@ class Test3 {
       LogCombineHelper.info("test:{},{}", 1, 2);
       LogCombineHelper.debug("test2:{},{}", 3, 4);
       executorService.execute(
+              //注解形式使用
               () -> sampleService.test2()
+      );
+      executorService.execute(
+              //直接调用
+              () -> {
+                 LogCombineHelper.info("service:{}", 2);
+                 LogCombineHelper.print();
+              }
       );
    }
 }
 
 @Service
-class SampleService{
+class SampleService {
    @LogCombine
    public void test2() {
       LogCombineHelper.info("service:{}", 2);

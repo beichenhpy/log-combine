@@ -101,9 +101,8 @@ class Test {
 ```
 
 4. 【new】If you want to use it in a non-blocking thread, call `LogCombineHelper.print()` manually in the method of the
-   non-blocking thread to enable printing in the non-blocking thread.  
-   Or you can use it normally as if you were calling a method, provided you add the `@LogCombine` annotation to the
-   method。
+   non-blocking thread to enable printing in the non-blocking thread.Or you can use it normally as if you were calling a
+   method, provided you add the `@LogCombine` annotation to the method。【The two ways cannot be mixed】
 
 ```java
 
@@ -113,23 +112,31 @@ class Test3 {
     @Resource
     private SampleService sampleService;
 
-    @LogCombine
-    @GetMapping("/spring")
-    @SneakyThrows
-    public void test() {
-        LogCombineHelper.info("test:{},{}", 1, 2);
-        LogCombineHelper.debug("test2:{},{}", 3, 4);
-        executorService.execute(
-                () -> sampleService.test2()
-        );
-    }
+   @LogCombine
+   @GetMapping("/spring")
+   @SneakyThrows
+   public void test() {
+      LogCombineHelper.info("test:{},{}", 1, 2);
+      LogCombineHelper.debug("test2:{},{}", 3, 4);
+      executorService.execute(
+              //LogCombine annotation
+              () -> sampleService.test2()
+      );
+      executorService.execute(
+              //manual print
+              () -> {
+                 LogCombineHelper.info("service:{}", "manual print");
+                 LogCombineHelper.print();
+              }
+      );
+   }
 }
 
 @Service
 class SampleService {
-    @LogCombine
-    public void test2() {
-        LogCombineHelper.info("service:{}", 2);
-    }
+   @LogCombine
+   public void test2() {
+      LogCombineHelper.info("service:{}", 2);
+   }
 }
 ```
