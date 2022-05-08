@@ -1,11 +1,16 @@
 # log-combine
 
-NOW **NOT SUPPORT** ASYNC NON-BLOCKING THREAD
+🎆 Asynchronous non-blocking threads are now supported!  
+The print result is as follows:
 
-**⚠WARNING**  
-if you use `LogCombineHelper` in non-blocking thread like  `runnable`  
-it maybe effects "ghost log", because a non-blocking thread method can not be controlled.
-
+```text
+2022-05-08 10:50:02.315  INFO 20390 --- [nio-8080-exec-6] combine-log have generated               : 
+2022-05-08 10:50:02,313 - [http-nio-8080-exec-6] INFO cn.beichenhpy.sample.controller.SampleController - [71] - test:1,2
+2022-05-08 10:50:02,313 - [http-nio-8080-exec-6] DEBUG cn.beichenhpy.sample.controller.SampleController - [72] - test2:3,4
+2022-05-08 10:50:02,314 - [http-nio-8080-exec-6] DEBUG cn.beichenhpy.sample.controller.SampleService - [43] - test3:test333
+2022-05-08 10:50:06.318  INFO 20390 --- [pool-4-thread-1] combine-log have generated               : 
+2022-05-08 10:50:02,314 - [pool-4-thread-1] DEBUG cn.beichenhpy.sample.controller.SampleController - [79] - test3:5
+```
 ## A tool for combined log printing in one method.
 
 **NOTICE**  
