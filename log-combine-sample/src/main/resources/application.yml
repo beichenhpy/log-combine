@@ -1,0 +1,3 @@
+logging:
+  level:
+    cn.beichenhpy.log: warn

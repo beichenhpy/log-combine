@@ -65,7 +65,10 @@ public class LogCombineContext {
             initContext(message);
         } else {
             String originMessage = logInfo.getMessage();
-            logInfo.setMessage(originMessage + message);
+            if (originMessage != null) {
+                message = originMessage + message;
+            }
+            logInfo.setMessage(message);
         }
     }
 

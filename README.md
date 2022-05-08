@@ -12,6 +12,11 @@
 2022-05-08 10:50:02,314 - [pool-4-thread-1] DEBUG cn.beichenhpy.sample.controller.SampleController - [79] - test3:5
 ```
 
+【feature】
+
+1. 支持异步线程的日志合并打印
+2. 支持根据用户设置日志等级来生成合并的日志
+
 ## 一个用于合并打印日志的工具包
 
 **注意！**  

@@ -11,6 +11,12 @@ The print result is as follows:
 2022-05-08 10:50:06.318  INFO 20390 --- [pool-4-thread-1] combine-log have generated               : 
 2022-05-08 10:50:02,314 - [pool-4-thread-1] DEBUG cn.beichenhpy.sample.controller.SampleController - [79] - test3:5
 ```
+
+【feature】
+
+1. Supports merge printing of logs for asynchronous threads
+2. Support for generating merged logs based on user-set log levels
+
 ## A tool for combined log printing in one method.
 
 **NOTICE**  

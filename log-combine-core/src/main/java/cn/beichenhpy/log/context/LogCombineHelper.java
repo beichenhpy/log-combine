@@ -27,6 +27,9 @@ import lombok.extern.slf4j.Slf4j;
  *     public void test(){
  *         String a = "foo";
  *         LogCombineHelper.info("测试:{}", a);
+ *         LogCombineHelper.warn("测试2:{}", a);
+ *         //打印日志
+ *         LogCombineHelper.print();
  *     }
  * </pre>
  * CREATE_TIME: 2022/4/23 16:12
@@ -34,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author beichenhpy
  * @version 1.0.0
  */
-@Slf4j(topic = "combine-log have generated")
+@Slf4j
 public class LogCombineHelper {
 
     /**
@@ -73,50 +76,71 @@ public class LogCombineHelper {
         return Thread.currentThread().getName();
     }
 
+
+    /**
+     * 添加TRACE
+     *
+     * @param msg   日志信息
+     * @param param 参数
+     */
+    public static void trace(String msg, Object... param) {
+        if (!log.isTraceEnabled()) {
+            return;
+        }
+        context.addLog(msg, getInvokeLineNumber(), LogLevel.TRACE, getInvokeClassName(), getThreadName(), param);
+    }
+
     /**
      * 添加info
      *
-     * @param msg 日志信息
+     * @param msg   日志信息
+     * @param param 参数
      */
-    public static void info(String msg, Object... param) {
-        context.addLog(msg, getInvokeLineNumber(), LogLevel.INFO, getInvokeClassName(), getThreadName(), param);
+    public static void debug(String msg, Object... param) {
+        if (!log.isDebugEnabled()) {
+            return;
+        }
+        context.addLog(msg, getInvokeLineNumber(), LogLevel.DEBUG, getInvokeClassName(), getThreadName(), param);
     }
 
 
     /**
      * 添加info
      *
-     * @param msg 日志信息
+     * @param msg   日志信息
+     * @param param 参数
      */
-    public static void debug(String msg, Object... param) {
-        context.addLog(msg, getInvokeLineNumber(), LogLevel.DEBUG, getInvokeClassName(), getThreadName(), param);
+    public static void info(String msg, Object... param) {
+        if (!log.isInfoEnabled()) {
+            return;
+        }
+        context.addLog(msg, getInvokeLineNumber(), LogLevel.INFO, getInvokeClassName(), getThreadName(), param);
     }
 
     /**
      * 添加WARN
      *
-     * @param msg 日志信息
+     * @param msg   日志信息
+     * @param param 参数
      */
     public static void warn(String msg, Object... param) {
+        if (!log.isWarnEnabled()) {
+            return;
+        }
         context.addLog(msg, getInvokeLineNumber(), LogLevel.WARN, getInvokeClassName(), getThreadName(), param);
     }
 
     /**
      * 添加ERROR
      *
-     * @param msg 日志信息
+     * @param msg   日志信息
+     * @param param 参数
      */
     public static void error(String msg, Object... param) {
+        if (!log.isErrorEnabled()) {
+            return;
+        }
         context.addLog(msg, getInvokeLineNumber(), LogLevel.ERROR, getInvokeClassName(), getThreadName(), param);
-    }
-
-    /**
-     * 添加TRACE
-     *
-     * @param msg 日志信息
-     */
-    public static void trace(String msg, Object... param) {
-        context.addLog(msg, getInvokeLineNumber(), LogLevel.TRACE, getInvokeClassName(), getThreadName(), param);
     }
 
 
@@ -124,9 +148,19 @@ public class LogCombineHelper {
      * 打印日志
      */
     public static void print() {
-        String log = context.getLog(true);
-        if (log != null) {
-            LogCombineHelper.log.info("{}", log);
+        String logMsg = context.getLog(true);
+        if (logMsg != null) {
+            if (log.isTraceEnabled()) {
+                log.trace("{}", logMsg);
+            } else if (log.isDebugEnabled()) {
+                log.debug("{}", logMsg);
+            } else if (log.isInfoEnabled()) {
+                log.info("{}", logMsg);
+            } else if (log.isWarnEnabled()) {
+                log.warn("{}", logMsg);
+            } else if (log.isErrorEnabled()) {
+                log.error("{}", logMsg);
+            }
         }
     }
 }

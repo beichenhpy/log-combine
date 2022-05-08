@@ -19,12 +19,11 @@ package cn.beichenhpy.log.aspect;
 
 import cn.beichenhpy.log.context.LogCombineContext;
 import cn.beichenhpy.log.context.LogCombineHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 日志合并打印切面
@@ -33,11 +32,10 @@ import org.slf4j.LoggerFactory;
  * @author beichenhpy
  * @version 1.0.0
  */
+@Slf4j
 @Aspect
 public class LogCombinePrintAspect {
 
-
-    private static final Logger logger = LoggerFactory.getLogger("combine-log have generated");
 
     private static final LogCombineContext context = LogCombineContext.getContext();
 
@@ -54,7 +52,7 @@ public class LogCombinePrintAspect {
     public void pushNest() {
         if (context.getLogLocalStorage() == null) {
             //init
-            context.initContext("\n--------------------------Spring Aop AutoLog Called--------------------------");
+            context.initContext(null);
         }
         context.getLogLocalStorage().setNestedFloor(context.getLogLocalStorage().getNestedFloor() + 1);
     }
@@ -84,7 +82,7 @@ public class LogCombinePrintAspect {
         try {
             popNest();
         } catch (Throwable e) {
-            logger.error("error:{},{}", e.getMessage(), e);
+            log.error("error:{},{}", e.getMessage(), e);
         } finally {
             if (getCurrentNest() == 0) {
                 LogCombineHelper.print();

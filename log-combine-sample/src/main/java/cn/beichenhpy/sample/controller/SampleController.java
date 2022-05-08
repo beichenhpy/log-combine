@@ -49,8 +49,8 @@ public class SampleController {
     @LogCombine
     @GetMapping("/spring")
     public void test() throws ExecutionException, InterruptedException {
-        LogCombineHelper.info("test:{},{}", 1, 2);
-        LogCombineHelper.debug("test2:{},{}", 3, 4);
+        LogCombineHelper.debug("test:{},{}", 1, 2);
+        LogCombineHelper.warn("test2:{},{}", 3, 4);
         sampleService.test2();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         //support but you need to manual print or use method with @LogCombine
@@ -76,14 +76,14 @@ public class SampleController {
     @SneakyThrows
     public void test2() {
         LogCombineHelper.info("test:{},{}", 1, 2);
-        LogCombineHelper.debug("test2:{},{}", 3, 4);
+        LogCombineHelper.warn("test2:{},{}", 3, 4);
         //no LogCombine nested
         sampleService.test3();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         //support but you need to manual print
         executorService.execute(
                 () -> {
-                    LogCombineHelper.debug("test3:{}", 5);
+                    LogCombineHelper.warn("test3:{}", 5);
                     try {
                         Thread.sleep(4000);
                     } catch (InterruptedException e) {
