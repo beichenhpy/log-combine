@@ -1,9 +1,16 @@
 # log-combine
 
-现在 **不支持非阻塞异步线程**
+🎆 现在支持异步非阻塞线程使用啦！  
+现有的打印方式改为，同步线程日志打印，异步日志线程单独打印出来。
 
-**⚠️警告**  
-如果你使用了 `LogCombineHelper` 在一个非阻塞的线程中如实现了  `runnable` 接口的类 可能会导致【脏日志】， 因为一个异步非阻塞线程不可控。
+```text
+2022-05-08 10:50:02.315  INFO 20390 --- [nio-8080-exec-6] combine-log have generated               : 
+2022-05-08 10:50:02,313 - [http-nio-8080-exec-6] INFO cn.beichenhpy.sample.controller.SampleController - [71] - test:1,2
+2022-05-08 10:50:02,313 - [http-nio-8080-exec-6] DEBUG cn.beichenhpy.sample.controller.SampleController - [72] - test2:3,4
+2022-05-08 10:50:02,314 - [http-nio-8080-exec-6] DEBUG cn.beichenhpy.sample.controller.SampleService - [43] - test3:test333
+2022-05-08 10:50:06.318  INFO 20390 --- [pool-4-thread-1] combine-log have generated               : 
+2022-05-08 10:50:02,314 - [pool-4-thread-1] DEBUG cn.beichenhpy.sample.controller.SampleController - [79] - test3:5
+```
 
 ## 一个用于合并打印日志的工具包
 
@@ -43,6 +50,34 @@ class Test {
 
 ```
 
+3. 【new】如果你想在异步线程中使用，请手动在异步线程的方法中调用 `LogCombineHelper.print()` 以实现异步线程的打印。
+
+```java
+class Test2 {
+    @GetMapping("/no-spring")
+    @SneakyThrows
+    public void test2() {
+        LogCombineHelper.info("test:{},{}", 1, 2);
+        LogCombineHelper.debug("test2:{},{}", 3, 4);
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        executorService.execute(
+                () -> {
+                    LogCombineHelper.debug("test3:{}", 5);
+                    try {
+                        Thread.sleep(4000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //手动调用打印方法
+                    LogCombineHelper.print();
+                }
+        );
+        //手动打印
+        LogCombineHelper.print();
+    }
+}
+```
+
 ### 如果你使用Spring框架
 
 1. 添加到你的依赖
@@ -69,4 +104,36 @@ class Test {
     }
 }
 
+```
+
+4. 【new】如果你想在异步线程中使用，请手动在异步线程的方法中调用 `LogCombineHelper.print()` 以实现异步线程的打印。  
+   或者你可以像调用方法一样正常使用，前提是需要在方法上添加 `@LogCombine`注解。
+
+```java
+
+
+class Test3 {
+
+   @Resource
+   private SampleService sampleService;
+
+   @LogCombine
+   @GetMapping("/spring")
+   @SneakyThrows
+   public void test() {
+      LogCombineHelper.info("test:{},{}", 1, 2);
+      LogCombineHelper.debug("test2:{},{}", 3, 4);
+      executorService.execute(
+              () -> sampleService.test2()
+      );
+   }
+}
+
+@Service
+class SampleService{
+   @LogCombine
+   public void test2() {
+      LogCombineHelper.info("service:{}", 2);
+   }
+}
 ```

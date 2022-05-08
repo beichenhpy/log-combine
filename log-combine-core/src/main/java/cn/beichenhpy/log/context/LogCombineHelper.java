@@ -89,7 +89,7 @@ public class LogCombineHelper {
      * @param msg 日志信息
      */
     public static void debug(String msg, Object... param) {
-        context.addLog(msg, getInvokeLineNumber(), LogLevel.INFO, getInvokeClassName(), getThreadName(), param);
+        context.addLog(msg, getInvokeLineNumber(), LogLevel.DEBUG, getInvokeClassName(), getThreadName(), param);
     }
 
     /**

@@ -19,6 +19,7 @@ package cn.beichenhpy.sample.controller;
 
 import cn.beichenhpy.log.annotation.LogCombine;
 import cn.beichenhpy.log.context.LogCombineHelper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,9 +53,9 @@ public class SampleController {
         LogCombineHelper.debug("test2:{},{}", 3, 4);
         sampleService.test2();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-        //[NOT SUPPORT] can not record log to context, because This operation is asynchronous and non-blocking. AOP can't wait.
+        //support but you need to manual print or use method with @LogCombine
         executorService.execute(
-                () -> LogCombineHelper.debug("test3:{}", 5)
+                () -> sampleService.test2()
         );
         //but if you use submit and get result ,it works.
         Future<?> task = executorService.submit(
@@ -65,15 +66,24 @@ public class SampleController {
 
 
     @GetMapping("/no-spring")
-    public void test2() throws ExecutionException, InterruptedException {
+    @SneakyThrows
+    public void test2() {
         LogCombineHelper.info("test:{},{}", 1, 2);
         LogCombineHelper.debug("test2:{},{}", 3, 4);
         //no LogCombine nested
         sampleService.test3();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-        //[NOT SUPPORT] can not record log to context, because This operation is asynchronous and non-blocking. AOP can't wait.
+        //support but you need to manual print
         executorService.execute(
-                () -> LogCombineHelper.debug("test3:{}", 5)
+                () -> {
+                    LogCombineHelper.debug("test3:{}", 5);
+                    try {
+                        Thread.sleep(4000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    LogCombineHelper.print();
+                }
         );
         //but if you use submit and get result ,it works.
         Future<?> task = executorService.submit(

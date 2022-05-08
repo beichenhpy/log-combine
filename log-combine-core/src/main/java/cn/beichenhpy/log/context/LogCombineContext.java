@@ -34,7 +34,7 @@ import java.time.format.DateTimeFormatter;
 public class LogCombineContext {
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
-    private final ThreadLocal<LogInfo> logLocalStorage = new InheritableThreadLocal<>();
+    private final ThreadLocal<LogInfo> logLocalStorage = new ThreadLocal<>();
 
     /**
      * 获取上下文 内部类懒加载
@@ -131,30 +131,6 @@ public class LogCombineContext {
     }
 
 
-    /**
-     * 脱离一层嵌套
-     */
-    public void popNest() {
-        LogInfo logLocalStorage = getLogLocalStorage();
-        logLocalStorage.setNestedFloor(logLocalStorage.getNestedFloor() - 1);
-    }
-
-    /**
-     * 进入一层嵌套
-     */
-    public void pushNest() {
-        LogInfo logLocalStorage = getLogLocalStorage();
-        logLocalStorage.setNestedFloor(logLocalStorage.getNestedFloor() + 1);
-    }
-
-    /**
-     * 获取当前嵌套层数
-     *
-     * @return -1 当前未初始化  否则返回层数
-     */
-    public int getCurrentNest() {
-        return getLogLocalStorage() == null ? -1 : getLogLocalStorage().getNestedFloor();
-    }
 
     private static class LogCombineContextHolder {
         private static final LogCombineContext instance = new LogCombineContext();

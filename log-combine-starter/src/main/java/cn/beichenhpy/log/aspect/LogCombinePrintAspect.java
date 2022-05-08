@@ -19,7 +19,6 @@ package cn.beichenhpy.log.aspect;
 
 import cn.beichenhpy.log.context.LogCombineContext;
 import cn.beichenhpy.log.context.LogCombineHelper;
-import cn.beichenhpy.log.entity.LogInfo;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -40,6 +39,35 @@ public class LogCombinePrintAspect {
 
     private static final Logger logger = LoggerFactory.getLogger("combine-log have generated");
 
+    private static final LogCombineContext context = LogCombineContext.getContext();
+
+    /**
+     * 脱离一层嵌套
+     */
+    public void popNest() {
+        context.getLogLocalStorage().setNestedFloor(context.getLogLocalStorage().getNestedFloor() - 1);
+    }
+
+    /**
+     * 进入一层嵌套
+     */
+    public void pushNest() {
+        if (context.getLogLocalStorage() == null) {
+            //init
+            context.initContext("\n--------------------------Spring Aop AutoLog Called--------------------------");
+        }
+        context.getLogLocalStorage().setNestedFloor(context.getLogLocalStorage().getNestedFloor() + 1);
+    }
+
+    /**
+     * 获取当前嵌套层数
+     *
+     * @return -1 当前未初始化  否则返回层数
+     */
+    public int getCurrentNest() {
+        return context.getLogLocalStorage() == null ? -1 : context.getLogLocalStorage().getNestedFloor();
+    }
+
 
     @Pointcut(value = "@annotation(cn.beichenhpy.log.annotation.LogCombine)")
     public void pointCut() {
@@ -48,26 +76,17 @@ public class LogCombinePrintAspect {
 
     @Before(value = "pointCut()")
     public void preLog() {
-        LogCombineContext context = LogCombineContext.getContext();
-        LogInfo localLogStorage = context.getLogLocalStorage();
-        if (localLogStorage == null) {
-            //init
-            context.initContext("\n--------------------------Spring Aop AutoLog Called--------------------------");
-        }
-        //入嵌套
-        context.pushNest();
+        pushNest();
     }
 
     @After(value = "pointCut()")
     public void logPrint() {
-        LogCombineContext context = LogCombineContext.getContext();
         try {
-            //出嵌套
-            context.popNest();
+            popNest();
         } catch (Throwable e) {
             logger.error("error:{},{}", e.getMessage(), e);
         } finally {
-            if (context.getCurrentNest() == 0) {
+            if (getCurrentNest() == 0) {
                 LogCombineHelper.print();
             }
         }
