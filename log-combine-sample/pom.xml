@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     <artifactId>log-combine-sample</artifactId>
     <dependencies>
@@ -38,6 +38,7 @@
                         </exclude>
                     </excludes>
                 </configuration>
+                <version>${spring-boot.version}</version>
             </plugin>
         </plugins>
     </build>

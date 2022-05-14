@@ -8,25 +8,60 @@
         <module>log-combine-starter</module>
         <module>log-combine-sample</module>
     </modules>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.7</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
     <groupId>cn.beichenhpy</groupId>
     <artifactId>log-combine</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <name>log-combine</name>
-    <description>log-combine</description>
+    <description>a tool for combined log printing in one method</description>
+    <url>https://beichenhpy.cn</url>
+
+    <developers>
+        <developer>
+            <name>韩鹏宇</name>
+            <email>beichenhpy@outlook.com</email>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>2.6.7</spring-boot.version>
+        <slf4j.version>1.7.32</slf4j.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
             <optional>true</optional>
         </dependency>
     </dependencies>
