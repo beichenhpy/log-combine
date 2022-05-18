@@ -1,5 +1,7 @@
 package cn.beichenhpy.log.utils;
 
+import java.util.Optional;
+
 /**
  * @author beichenhpy
  * <p> 2022/5/18 21:26
@@ -16,6 +18,7 @@ public class LogCombineUtil {
      * @return 缩短后的全限定类名
      */
     public static String curtailReference(String origin, int length) {
+        origin = Optional.ofNullable(origin).orElse("null");
         int originLength = origin.length();
         if (originLength <= length) {
             return origin;
