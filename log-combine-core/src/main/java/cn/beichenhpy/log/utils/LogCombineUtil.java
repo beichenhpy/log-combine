@@ -24,10 +24,8 @@ public class LogCombineUtil {
         String[] curtailItems = new String[originItems.length];
         System.arraycopy(originItems, 0, curtailItems, 0, originItems.length);
         for (int i = 0; i < originItems.length - 1; i++) {
-            String currentPackage = originItems[i];
-            String curtailedCurrentPackage = currentPackage.substring(0, 1);
-            curtailItems[i] = curtailedCurrentPackage;
-            int currentLength = originLength - (currentPackage.length() - curtailedCurrentPackage.length());
+            curtailItems[i] = originItems[i].substring(0, 1);
+            int currentLength = originLength - (originItems[i].length() - 1);
             if (currentLength <= length) {
                 return String.join(".", curtailItems);
             }
