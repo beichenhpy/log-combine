@@ -17,23 +17,22 @@ public class LogCombineUtil {
      */
     public static String curtailReference(String origin, int length) {
         int originLength = origin.length();
-        if (originLength < length) {
+        if (originLength <= length) {
             return origin;
-        } else {
-            String[] originItems = origin.split("\\.");
-            String[] curtailItems = new String[originItems.length];
-            System.arraycopy(originItems, 0, curtailItems, 0, originItems.length);
-            for (int i = 0; i < originItems.length - 1; i++) {
-                String currentPackage = originItems[i];
-                String curtailedCurrentPackage = currentPackage.substring(0, 1);
-                curtailItems[i] = curtailedCurrentPackage;
-                int currentLength = originLength - (currentPackage.length() - curtailedCurrentPackage.length());
-                if (currentLength <= length) {
-                    return String.join(".", curtailItems);
-                }
-            }
-            return String.join(".", curtailItems);
         }
+        String[] originItems = origin.split("\\.");
+        String[] curtailItems = new String[originItems.length];
+        System.arraycopy(originItems, 0, curtailItems, 0, originItems.length);
+        for (int i = 0; i < originItems.length - 1; i++) {
+            String currentPackage = originItems[i];
+            String curtailedCurrentPackage = currentPackage.substring(0, 1);
+            curtailItems[i] = curtailedCurrentPackage;
+            int currentLength = originLength - (currentPackage.length() - curtailedCurrentPackage.length());
+            if (currentLength <= length) {
+                return String.join(".", curtailItems);
+            }
+        }
+        return String.join(".", curtailItems);
     }
 
     public static void main(String[] args) {
