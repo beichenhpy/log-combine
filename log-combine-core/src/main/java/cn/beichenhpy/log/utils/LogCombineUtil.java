@@ -1,7 +1,5 @@
 package cn.beichenhpy.log.utils;
 
-import java.util.Locale;
-
 /**
  * @author beichenhpy
  * <p> 2022/5/18 21:26
