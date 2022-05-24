@@ -37,7 +37,7 @@ public class LogCombineContext {
     private final ThreadLocal<LogInfo> logLocalStorage = new ThreadLocal<>();
 
     /**
-     * 获取上下文 内部类懒加载
+     * 获取上下文
      *
      * @return 上下文
      */
@@ -134,12 +134,10 @@ public class LogCombineContext {
     }
 
 
-
+    /**
+     * single mode
+     */
     private static class LogCombineContextHolder {
         private static final LogCombineContext instance = new LogCombineContext();
-
-        public LogCombineContextHolder() {
-
-        }
     }
 }
