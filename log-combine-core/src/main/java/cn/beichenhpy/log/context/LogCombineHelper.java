@@ -18,7 +18,8 @@
 package cn.beichenhpy.log.context;
 
 import cn.beichenhpy.log.enums.LogLevel;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 日志合并打印工具类,使用方式
@@ -37,9 +38,9 @@ import lombok.extern.slf4j.Slf4j;
  * @author beichenhpy
  * @version 1.0.0
  */
-@Slf4j
 public class LogCombineHelper {
 
+    private static final Logger log = LoggerFactory.getLogger(LogCombineHelper.class);
     /**
      * 日志存储上下文
      */

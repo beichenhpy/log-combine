@@ -17,10 +17,6 @@
 
 package cn.beichenhpy.log.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
  * <PRE>
  * 日志信息
@@ -30,9 +26,7 @@ import lombok.NoArgsConstructor;
  * @author beichenhpy
  * @version 1.0.0
  */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class LogInfo {
 
     /**
@@ -44,4 +38,31 @@ public class LogInfo {
      * 递归层数
      */
     private int nestedFloor;
+
+
+    public LogInfo(String message, int nestedFloor) {
+        this.message = message;
+        this.nestedFloor = nestedFloor;
+    }
+
+
+    public LogInfo() {
+    }
+
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public int getNestedFloor() {
+        return nestedFloor;
+    }
+
+    public void setNestedFloor(int nestedFloor) {
+        this.nestedFloor = nestedFloor;
+    }
 }
