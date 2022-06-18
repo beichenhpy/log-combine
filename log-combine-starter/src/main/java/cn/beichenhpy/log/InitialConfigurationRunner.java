@@ -1,7 +1,6 @@
 package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.config.SpringLogCombineConfiguration;
-import cn.beichenhpy.log.spi.Configuration;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
@@ -20,9 +19,8 @@ public class InitialConfigurationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        Configuration configuration = new Configuration(
-                logCombineConfiguration.getPattern()
-        );
+        Configuration configuration = LogCombineHelper.getCurrentConfiguration();
+        configuration.setPattern(logCombineConfiguration.getPattern());
         LogCombineContext.setConfiguration(configuration);
     }
 }

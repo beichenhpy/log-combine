@@ -17,28 +17,28 @@
 package cn.beichenhpy.log.spi;
 
 import cn.beichenhpy.log.Configuration;
+import cn.beichenhpy.log.utils.LogCombineUtil;
 
 /**
- * SPI实现接口，用于实现配置文件 <br/>
+ * <PRE>
+ *
+ * </PRE>
+ * CREATE_TIME: 2022/6/18 22:08
  *
  * @author beichenhpy
  * @version 1.0.0
- * @see DefaultLogCombineDriver 参考默认驱动
  */
-public interface LogCombineDriver {
+public class DefaultLogCombineDriver implements LogCombineDriver {
+    @Override
+    public int order() {
+        //默认的最先执行
+        return Integer.MIN_VALUE;
+    }
 
-
-    /**
-     * 执行顺序
-     *
-     * @return 选择执行顺序
-     */
-    int order();
-
-    /**
-     * 初始化配置文件
-     *
-     * @return 返回自定义的配置文件
-     */
-    Configuration initial();
+    @Override
+    public Configuration initial() {
+        Configuration defaultConfiguration = new Configuration();
+        defaultConfiguration.setPattern(LogCombineUtil.DEFAULT_PATTERN);
+        return defaultConfiguration;
+    }
 }

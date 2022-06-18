@@ -18,16 +18,13 @@
 package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.enums.LogLevel;
-import cn.beichenhpy.log.spi.Configuration;
+import cn.beichenhpy.log.spi.DefaultLogCombineDriver;
 import cn.beichenhpy.log.spi.LogCombineDriver;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
-import java.util.ServiceLoader;
-
-import static cn.beichenhpy.log.utils.LogCombineUtil.DEFAULT_PATTERN;
+import java.util.*;
 
 /**
  * Context for log combine
@@ -43,25 +40,23 @@ public class LogCombineContext {
     static {
         ServiceLoader<LogCombineDriver> services = ServiceLoader.load(LogCombineDriver.class);
         Iterator<LogCombineDriver> iterator = services.iterator();
-        if (!iterator.hasNext()) {
-            // no spi impl
-            configuration = new Configuration(DEFAULT_PATTERN);
-        } else {
-            int count = 0;
-            while (iterator.hasNext()) {
-                count++;
-                LogCombineDriver next = iterator.next();
-                if (next != null) {
-                    configuration = next.initial();
-                }
-            }
-            if (count > 1) {
-                System.err.println("[WARN] LogCombine has more than 1 spi impl, will chose latest one");
+        //先将iterator存入List
+        List<LogCombineDriver> drivers = new ArrayList<>();
+        while (iterator.hasNext()) {
+            LogCombineDriver next = iterator.next();
+            if (next != null) {
+                drivers.add(next);
             }
         }
+        LogCombineDriver logCombineDriver = drivers.stream()
+                .max(Comparator.comparingInt(LogCombineDriver::order))
+                .orElse(new DefaultLogCombineDriver());
+        System.out.println(logCombineDriver.order());
+        System.out.println(logCombineDriver.initial());
+        configuration = logCombineDriver.initial();
     }
 
-    public static Configuration getConfiguration() {
+    protected static Configuration getConfiguration() {
         return LogCombineContext.configuration;
     }
 

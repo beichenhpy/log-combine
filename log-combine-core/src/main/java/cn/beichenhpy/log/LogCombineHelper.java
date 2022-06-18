@@ -48,6 +48,15 @@ public class LogCombineHelper {
 
 
     /**
+     * 获取当前的配置文件
+     *
+     * @return 返回配置文件
+     */
+    public static Configuration getCurrentConfiguration() {
+        return LogCombineContext.getConfiguration();
+    }
+
+    /**
      * 获取调用本方法的行 <br>
      * 三层堆栈 getLineNumber(1) -> info/warn/...(2) -> 具体调用的方法(3)
      *
@@ -175,6 +184,7 @@ public class LogCombineHelper {
      * 打印日志
      */
     public static void print() {
+        System.out.println(LogCombineHelper.getCurrentConfiguration());
         if (getCurrentNest() == 0) {
             String logMsg = context.getLog(true);
             if (logMsg != null) {

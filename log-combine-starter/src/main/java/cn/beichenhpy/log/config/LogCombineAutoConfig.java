@@ -45,7 +45,7 @@ public class LogCombineAutoConfig {
     }
 
     @Bean
-    public InitialConfigurationRunner initialLogCombineConfigurationStater() {
+    public InitialConfigurationRunner initialConfigurationRunner() {
         return new InitialConfigurationRunner();
     }
 
