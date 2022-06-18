@@ -17,8 +17,8 @@
 
 package cn.beichenhpy.sample.controller;
 
+import cn.beichenhpy.log.LogCombineHelper;
 import cn.beichenhpy.log.annotation.LogCombine;
-import cn.beichenhpy.log.context.LogCombineHelper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

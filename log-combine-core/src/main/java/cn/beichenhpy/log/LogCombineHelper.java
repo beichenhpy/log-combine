@@ -15,7 +15,7 @@
  *
  */
 
-package cn.beichenhpy.log.context;
+package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.enums.LogLevel;
 import org.slf4j.Logger;

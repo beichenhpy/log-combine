@@ -15,14 +15,20 @@
  *
  */
 
-package cn.beichenhpy.log.context;
+package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.entity.LogInfo;
 import cn.beichenhpy.log.enums.LogLevel;
+import cn.beichenhpy.log.spi.Configuration;
+import cn.beichenhpy.log.spi.LogCombineDriver;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
+import java.util.ServiceLoader;
+
+import static cn.beichenhpy.log.utils.LogCombineUtil.DEFAULT_PATTERN;
 
 /**
  * Context for log combine
@@ -32,6 +38,32 @@ import java.time.format.DateTimeFormatter;
  * @version 1.0.0
  */
 public class LogCombineContext {
+
+    protected static Configuration configuration;
+
+    static {
+        ServiceLoader<LogCombineDriver> services = ServiceLoader.load(LogCombineDriver.class);
+        Iterator<LogCombineDriver> iterator = services.iterator();
+        if (!iterator.hasNext()) {
+            // no spi impl
+            configuration = new Configuration(DEFAULT_PATTERN);
+        } else {
+            int count = 0;
+            while (iterator.hasNext()) {
+                count++;
+                LogCombineDriver next = iterator.next();
+                if (next != null) {
+                    configuration = next.initial();
+                }
+            }
+            if (count > 1) {
+                System.err.println("[WARN] LogCombine has more than 1 spi impl, will chose latest one");
+            }
+        }
+    }
+
+    private LogCombineContext() {
+    }
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
     private final ThreadLocal<LogInfo> logLocalStorage = new ThreadLocal<>();

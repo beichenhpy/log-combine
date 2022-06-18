@@ -6,6 +6,8 @@ package cn.beichenhpy.log.utils;
  */
 public class LogCombineUtil {
 
+    public static final String DEFAULT_PATTERN = "DEFAULT";
+
     /**
      * 根据指定长度缩短全限定类名的包名部分
      * <p> 缩短包名,直到全限定类名到达指定的长度，

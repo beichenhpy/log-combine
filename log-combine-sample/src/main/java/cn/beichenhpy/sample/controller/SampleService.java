@@ -17,8 +17,8 @@
 
 package cn.beichenhpy.sample.controller;
 
+import cn.beichenhpy.log.LogCombineHelper;
 import cn.beichenhpy.log.annotation.LogCombine;
-import cn.beichenhpy.log.context.LogCombineHelper;
 import org.springframework.stereotype.Service;
 
 /**

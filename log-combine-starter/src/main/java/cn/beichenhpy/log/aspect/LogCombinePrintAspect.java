@@ -23,7 +23,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
-import static cn.beichenhpy.log.context.LogCombineHelper.*;
+import static cn.beichenhpy.log.LogCombineHelper.*;
 
 /**
  * 日志合并打印切面
