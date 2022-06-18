@@ -13,15 +13,16 @@ import javax.annotation.Resource;
  * @author beichenhpy
  * @version 1.0.0
  */
-public class InitialLogCombineConfigurationStarter implements ApplicationRunner {
+public class InitialConfigurationRunner implements ApplicationRunner {
 
     @Resource
     private SpringLogCombineConfiguration logCombineConfiguration;
 
     @Override
     public void run(ApplicationArguments args) {
-        LogCombineContext.configuration = new Configuration(
+        Configuration configuration = new Configuration(
                 logCombineConfiguration.getPattern()
         );
+        LogCombineContext.setConfiguration(configuration);
     }
 }

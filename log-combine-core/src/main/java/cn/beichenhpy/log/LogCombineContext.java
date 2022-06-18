@@ -17,7 +17,6 @@
 
 package cn.beichenhpy.log;
 
-import cn.beichenhpy.log.entity.LogInfo;
 import cn.beichenhpy.log.enums.LogLevel;
 import cn.beichenhpy.log.spi.Configuration;
 import cn.beichenhpy.log.spi.LogCombineDriver;
@@ -39,7 +38,7 @@ import static cn.beichenhpy.log.utils.LogCombineUtil.DEFAULT_PATTERN;
  */
 public class LogCombineContext {
 
-    protected static Configuration configuration;
+    private static Configuration configuration;
 
     static {
         ServiceLoader<LogCombineDriver> services = ServiceLoader.load(LogCombineDriver.class);
@@ -60,6 +59,14 @@ public class LogCombineContext {
                 System.err.println("[WARN] LogCombine has more than 1 spi impl, will chose latest one");
             }
         }
+    }
+
+    public static Configuration getConfiguration() {
+        return LogCombineContext.configuration;
+    }
+
+    protected static void setConfiguration(Configuration configuration) {
+        LogCombineContext.configuration = configuration;
     }
 
     private LogCombineContext() {
@@ -171,5 +178,48 @@ public class LogCombineContext {
      */
     private static class LogCombineContextHolder {
         private static final LogCombineContext instance = new LogCombineContext();
+    }
+
+    /**
+     * 日志信息
+     */
+    protected static class LogInfo {
+
+        /**
+         * 消息
+         */
+        private String message;
+
+        /**
+         * 递归层数
+         */
+        private int nestedFloor;
+
+
+        public LogInfo(String message, int nestedFloor) {
+            this.message = message;
+            this.nestedFloor = nestedFloor;
+        }
+
+
+        public LogInfo() {
+        }
+
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public int getNestedFloor() {
+            return nestedFloor;
+        }
+
+        public void setNestedFloor(int nestedFloor) {
+            this.nestedFloor = nestedFloor;
+        }
     }
 }
