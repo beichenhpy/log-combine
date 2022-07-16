@@ -10,7 +10,7 @@ import javax.annotation.Resource;
  * 使用Spring的配置文件覆盖原始
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @since 0.0.2
  */
 public class InitialConfigurationRunner implements ApplicationRunner {
 

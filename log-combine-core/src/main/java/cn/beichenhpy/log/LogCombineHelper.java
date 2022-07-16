@@ -33,10 +33,9 @@ import org.slf4j.LoggerFactory;
  *         LogCombineHelper.print();
  *     }
  * </pre>
- * CREATE_TIME: 2022/4/23 16:12
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @since 0.0.1
  */
 public class LogCombineHelper {
 

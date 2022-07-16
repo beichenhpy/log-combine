@@ -16,14 +16,10 @@
 package cn.beichenhpy.log.enums;
 
 /**
- * <PRE>
- *
- * </PRE>
- * CREATE_TIME: 2022/4/23 15:54
  * copy from org.springframework.boot.logging
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @since 0.0.1
  */
 public enum LogLevel {
 

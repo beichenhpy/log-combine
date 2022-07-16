@@ -27,11 +27,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * Context for log combine
- * <p>CREATE_TIME: 2022/4/23 15:51
+ * 合并打印上下文
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @since 0.0.1
  */
 public class LogCombineContext {
 
@@ -51,8 +50,6 @@ public class LogCombineContext {
         LogCombineDriver logCombineDriver = drivers.stream()
                 .max(Comparator.comparingInt(LogCombineDriver::order))
                 .orElse(new DefaultLogCombineDriver());
-        System.out.println(logCombineDriver.order());
-        System.out.println(logCombineDriver.initial());
         configuration = logCombineDriver.initial();
     }
 

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>log-combine</artifactId>
         <groupId>cn.beichenhpy</groupId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
@@ -19,9 +19,15 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>cn.beichenhpy</groupId>
             <artifactId>log-combine-starter</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

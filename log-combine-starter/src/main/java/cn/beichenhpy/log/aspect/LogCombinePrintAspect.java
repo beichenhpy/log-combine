@@ -17,6 +17,7 @@
 
 package cn.beichenhpy.log.aspect;
 
+import cn.beichenhpy.log.LogCombineHelper;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -24,14 +25,11 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static cn.beichenhpy.log.LogCombineHelper.*;
-
 /**
  * 日志合并打印切面
- * CREATE_TIME: 2022/4/23 16:28
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @since 0.0.1
  */
 @Aspect
 public class LogCombinePrintAspect {
@@ -45,17 +43,17 @@ public class LogCombinePrintAspect {
 
     @Before(value = "pointCut()")
     public void preLog() {
-        pushNest();
+        LogCombineHelper.pushNest();
     }
 
     @After(value = "pointCut()")
     public void logPrint() {
         try {
-            popNest();
+            LogCombineHelper.popNest();
         } catch (Throwable e) {
             log.error("error:{},{}", e.getMessage(), e);
         } finally {
-            print();
+            LogCombineHelper.print();
         }
     }
 }

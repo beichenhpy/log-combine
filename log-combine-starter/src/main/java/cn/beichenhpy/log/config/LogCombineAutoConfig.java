@@ -23,11 +23,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Config for aspect and ThreadPool
- * CREATE_TIME: 2022/4/23 16:27
+ * 自动装配
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @since 0.0.1
  */
 @Configuration
 public class LogCombineAutoConfig {

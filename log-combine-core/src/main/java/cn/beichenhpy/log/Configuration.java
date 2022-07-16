@@ -22,7 +22,7 @@ package cn.beichenhpy.log;
  * 配置文件
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @since 0.0.2
  */
 public class Configuration {
 

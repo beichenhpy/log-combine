@@ -24,10 +24,9 @@ import java.lang.annotation.Target;
 
 /**
  * 所有添加了该注解的方法，并使用{@code LogCombineHelper.xxx}的，都会合并日志打印
- * CREATE_TIME: 2022/4/23 16:32
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @version 0.0.1
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

@@ -10,7 +10,7 @@
     </modules>
     <groupId>cn.beichenhpy</groupId>
     <artifactId>log-combine</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <name>log-combine</name>
     <description>a tool for combined log printing in one method</description>
     <url>https://beichenhpy.cn</url>
@@ -61,15 +61,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
-            <optional>true</optional>
-        </dependency>
-    </dependencies>
 
 
 </project>

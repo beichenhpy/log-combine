@@ -27,10 +27,9 @@ import java.lang.annotation.Target;
 
 /**
  * 是否启用日志合并打印功能，在Spring入口类添加
- * CREATE_TIME: 2022/4/23 16:24
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @since 0.0.1
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

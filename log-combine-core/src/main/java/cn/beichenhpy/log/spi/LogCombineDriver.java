@@ -22,8 +22,8 @@ import cn.beichenhpy.log.Configuration;
  * SPI实现接口，用于实现配置文件 <br/>
  *
  * @author beichenhpy
- * @version 1.0.0
  * @see DefaultLogCombineDriver 参考默认驱动
+ * @since 0.0.2
  */
 public interface LogCombineDriver {
 

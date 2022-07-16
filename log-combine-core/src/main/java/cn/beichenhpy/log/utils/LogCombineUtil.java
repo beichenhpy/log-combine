@@ -1,8 +1,10 @@
 package cn.beichenhpy.log.utils;
 
 /**
+ * 工具类
+ *
  * @author beichenhpy
- * <p> 2022/5/18 21:26
+ * @since 0.0.1
  */
 public class LogCombineUtil {
 

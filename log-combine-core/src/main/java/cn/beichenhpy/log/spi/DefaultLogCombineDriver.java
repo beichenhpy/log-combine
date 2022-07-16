@@ -20,13 +20,10 @@ import cn.beichenhpy.log.Configuration;
 import cn.beichenhpy.log.utils.LogCombineUtil;
 
 /**
- * <PRE>
- *
- * </PRE>
- * CREATE_TIME: 2022/6/18 22:08
+ * 默认spi实现类
  *
  * @author beichenhpy
- * @version 1.0.0
+ * @since 0.0.2
  */
 public class DefaultLogCombineDriver implements LogCombineDriver {
     @Override
