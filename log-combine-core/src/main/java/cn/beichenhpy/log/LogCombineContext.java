@@ -17,14 +17,16 @@
 
 package cn.beichenhpy.log;
 
+import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.enums.LogLevel;
-import cn.beichenhpy.log.spi.DefaultLogCombineDriver;
-import cn.beichenhpy.log.spi.LogCombineDriver;
+import cn.beichenhpy.log.utils.LogCombineUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 /**
  * 合并打印上下文
@@ -34,24 +36,8 @@ import java.util.*;
  */
 public class LogCombineContext {
 
-    private static Configuration configuration;
-
-    static {
-        ServiceLoader<LogCombineDriver> services = ServiceLoader.load(LogCombineDriver.class);
-        Iterator<LogCombineDriver> iterator = services.iterator();
-        //先将iterator存入List
-        List<LogCombineDriver> drivers = new ArrayList<>();
-        while (iterator.hasNext()) {
-            LogCombineDriver next = iterator.next();
-            if (next != null) {
-                drivers.add(next);
-            }
-        }
-        LogCombineDriver logCombineDriver = drivers.stream()
-                .max(Comparator.comparingInt(LogCombineDriver::order))
-                .orElse(new DefaultLogCombineDriver());
-        configuration = logCombineDriver.initial();
-    }
+    private static Configuration configuration = LogCombineUtil.DEFAULT_CONFIGURATION;
+    private static ParsedPattern parsedPattern = LogCombineUtil.DEFAULT_PARSED_PATTERN;
 
     protected static Configuration getConfiguration() {
         return LogCombineContext.configuration;
@@ -64,8 +50,16 @@ public class LogCombineContext {
     private LogCombineContext() {
     }
 
+    protected static ParsedPattern getParsedPattern() {
+        return LogCombineContext.parsedPattern;
+    }
+
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
     private final ThreadLocal<LogInfo> logLocalStorage = new ThreadLocal<>();
+
+    protected static void setParsedPattern(ParsedPattern parsedPattern) {
+        LogCombineContext.parsedPattern = parsedPattern;
+    }
 
     /**
      * 获取上下文
@@ -175,6 +169,9 @@ public class LogCombineContext {
     /**
      * 日志信息
      */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     protected static class LogInfo {
 
         /**
@@ -186,32 +183,5 @@ public class LogCombineContext {
          * 递归层数
          */
         private int nestedFloor;
-
-
-        public LogInfo(String message, int nestedFloor) {
-            this.message = message;
-            this.nestedFloor = nestedFloor;
-        }
-
-
-        public LogInfo() {
-        }
-
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-
-        public int getNestedFloor() {
-            return nestedFloor;
-        }
-
-        public void setNestedFloor(int nestedFloor) {
-            this.nestedFloor = nestedFloor;
-        }
     }
 }

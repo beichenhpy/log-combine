@@ -19,12 +19,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>cn.beichenhpy</groupId>
             <artifactId>log-combine-starter</artifactId>
             <version>${project.version}</version>

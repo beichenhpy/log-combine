@@ -18,6 +18,7 @@
 package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.enums.LogLevel;
+import cn.beichenhpy.log.utils.LogCombineUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,12 +48,13 @@ public class LogCombineHelper {
 
 
     /**
-     * 获取当前的配置文件
+     * 设置日志打印pattern
      *
-     * @return 返回配置文件
+     * @param pattern 格式
      */
-    public static Configuration getCurrentConfiguration() {
-        return LogCombineContext.getConfiguration();
+    public static void setPattern(String pattern) {
+        LogCombineContext.getConfiguration().setPattern(pattern);
+        LogCombineContext.setParsedPattern(LogCombineUtil.parsePattern(pattern));
     }
 
     /**
@@ -183,7 +185,6 @@ public class LogCombineHelper {
      * 打印日志
      */
     public static void print() {
-        System.out.println(LogCombineHelper.getCurrentConfiguration());
         if (getCurrentNest() == 0) {
             String logMsg = context.getLog(true);
             if (logMsg != null) {

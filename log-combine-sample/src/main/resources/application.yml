@@ -1,6 +1,3 @@
 logging:
   level:
     cn.beichenhpy.log: info
-
-log-combine:
-  pattern: spring-hacker

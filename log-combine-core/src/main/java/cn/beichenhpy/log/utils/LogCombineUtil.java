@@ -1,5 +1,13 @@
 package cn.beichenhpy.log.utils;
 
+import cn.beichenhpy.log.Configuration;
+import cn.beichenhpy.log.entity.ParsedPattern;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * 工具类
  *
@@ -7,8 +15,50 @@ package cn.beichenhpy.log.utils;
  * @since 0.0.1
  */
 public class LogCombineUtil {
+    public static final String DEFAULT_PATTERN = "%date - [%thread] %level %class - [%line] - %msg";
+    public static final String DEFAULT_LOG_FORMAT = "%s - [%s] %s %s - [%s] - %s";
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss,SSS";
+    public static final int DEFAULT_CLASS_LENGTH = -1;
+    public static final Map<String, Integer> DEFAULT_KEYWORD_ORDER = new LinkedHashMap<>(8);
+    public static final ParsedPattern DEFAULT_PARSED_PATTERN = new ParsedPattern();
+    public static final Configuration DEFAULT_CONFIGURATION = new Configuration();
+    /**
+     * key word
+     */
+    protected static final String STRING_PATTERN = "%s";
+    protected static final String LOG_KEY_WORD_DATE = "date";
+    protected static final String LOG_KEY_WORD_DATE_REGEX = "date\\{(.*?)}";
+    protected static final String LOG_KEY_WORD_THREAD = "thread";
+    protected static final String LOG_KEY_WORD_LEVEL = "level";
+    protected static final String LOG_KEY_WORD_CLASS = "class";
+    protected static final String LOG_KEY_WORD_CLASS_REGEX = "class\\{(.*?)}";
+    protected static final String LOG_KEY_WORD_LINE = "line";
+    protected static final String LOG_KEY_WORD_MSG = "msg";
 
-    public static final String DEFAULT_PATTERN = "DEFAULT";
+    static {
+        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_DATE, 0);
+        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_THREAD, 1);
+        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_LEVEL, 2);
+        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_CLASS, 3);
+        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_LINE, 4);
+        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_MSG, 5);
+    }
+
+    /**
+     * 初始化空的关键字排序
+     *
+     * @return 返回空的关键字排序
+     */
+    private static Map<String, Integer> initEmptyKeywordOrder() {
+        Map<String, Integer> empty = new LinkedHashMap<>();
+        empty.put(LOG_KEY_WORD_DATE, -1);
+        empty.put(LOG_KEY_WORD_THREAD, -1);
+        empty.put(LOG_KEY_WORD_LEVEL, -1);
+        empty.put(LOG_KEY_WORD_CLASS, -1);
+        empty.put(LOG_KEY_WORD_LINE, -1);
+        empty.put(LOG_KEY_WORD_MSG, -1);
+        return empty;
+    }
 
     /**
      * 根据指定长度缩短全限定类名的包名部分
@@ -40,10 +90,95 @@ public class LogCombineUtil {
         return String.join(".", curtailItems);
     }
 
-    public static void main(String[] args) {
-        String origin = "cn.beichenhpy.log.LogCombineHelper";
-        String s = curtailReference(origin, 20);
-        System.out.println(s);
+
+    /**
+     * 解析
+     */
+    public static ParsedPattern parsePattern(String pattern) {
+        if (DEFAULT_PATTERN.equals(pattern)) {
+            return DEFAULT_PARSED_PATTERN;
+        }
+        ParsedPattern parsedPattern = new ParsedPattern();
+        Map<String, Integer> keywordAndOrder = initEmptyKeywordOrder();
+        String[] patternArrays = pattern.split("%");
+        StringBuilder logFormatBuilder = new StringBuilder();
+        for (int i = 0; i < patternArrays.length; i++) {
+            String item = patternArrays[i];
+            if ("".equals(item)) {
+                continue;
+            }
+            if (item.startsWith(LOG_KEY_WORD_DATE)) {
+                //date
+                item = parseDate(parsedPattern, item);
+                keywordAndOrder.put(LOG_KEY_WORD_DATE, i);
+            } else if (item.startsWith(LOG_KEY_WORD_CLASS)) {
+                //class
+                item = parseClass(parsedPattern, item);
+                keywordAndOrder.put(LOG_KEY_WORD_CLASS, i);
+            } else if (item.startsWith(LOG_KEY_WORD_LEVEL)) {
+                //level
+                item = item.replace(LOG_KEY_WORD_LEVEL, STRING_PATTERN);
+                keywordAndOrder.put(LOG_KEY_WORD_LEVEL, i);
+            } else if (item.startsWith(LOG_KEY_WORD_LINE)) {
+                //line
+                item = item.replace(LOG_KEY_WORD_LINE, STRING_PATTERN);
+                keywordAndOrder.put(LOG_KEY_WORD_LINE, i);
+            } else if (item.startsWith(LOG_KEY_WORD_THREAD)) {
+                //thread
+                item = item.replace(LOG_KEY_WORD_THREAD, STRING_PATTERN);
+                keywordAndOrder.put(LOG_KEY_WORD_THREAD, i);
+            } else if (item.startsWith(LOG_KEY_WORD_MSG)) {
+                //msg
+                item = item.replace(LOG_KEY_WORD_MSG, STRING_PATTERN);
+                keywordAndOrder.put(LOG_KEY_WORD_MSG, i);
+            }
+            logFormatBuilder.append(item);
+        }
+        parsedPattern.setLogFormat(logFormatBuilder.toString());
+        parsedPattern.setKeyWordAndOrder(keywordAndOrder);
+        return parsedPattern;
     }
+
+    /**
+     * 设置日期格式化格式，返回解析后的样式
+     *
+     * @param parsedPattern 解析后的样式
+     * @param item          日期的样式
+     * @return 返回日期的样式格式化后的字符串
+     */
+    private static String parseDate(ParsedPattern parsedPattern, String item) {
+        //date
+        Pattern datePattern = Pattern.compile(LOG_KEY_WORD_DATE_REGEX);
+        Matcher matcher = datePattern.matcher(item);
+        if (matcher.find()) {
+            parsedPattern.setDateFormat(matcher.group(1));
+            item = item.replace(matcher.group(), STRING_PATTERN);
+        } else {
+            //default format
+            item = item.replace(LOG_KEY_WORD_DATE, STRING_PATTERN);
+        }
+        return item;
+    }
+
+    /**
+     * 设置类名的长度， 返回解析后的样式
+     *
+     * @param parsedPattern 解析后的样式
+     * @param item          类名的样式
+     * @return 返回类名的样式格式化后的字符串
+     */
+    private static String parseClass(ParsedPattern parsedPattern, String item) {
+        Pattern datePattern = Pattern.compile(LOG_KEY_WORD_CLASS_REGEX);
+        Matcher matcher = datePattern.matcher(item);
+        if (matcher.find()) {
+            parsedPattern.setClassLength(Integer.parseInt(matcher.group(1)));
+            item = item.replace(matcher.group(), STRING_PATTERN);
+        } else {
+            //default format
+            item = item.replace(LOG_KEY_WORD_CLASS, STRING_PATTERN);
+        }
+        return item;
+    }
+
 
 }
