@@ -32,7 +32,7 @@ public class ParsedPattern {
     /**
      * 日期格式转换
      */
-    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(LogCombineUtil.DEFAULT_DATE_FORMAT);
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(this.dateFormat);
 
     /**
      * 类名的长度限制,默认不限制长度

@@ -17,6 +17,7 @@
 
 package cn.beichenhpy.log;
 
+import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.enums.LogLevel;
 import cn.beichenhpy.log.utils.LogCombineUtil;
 import org.slf4j.Logger;
@@ -54,7 +55,12 @@ public class LogCombineHelper {
      */
     public static void setPattern(String pattern) {
         LogCombineContext.getConfiguration().setPattern(pattern);
-        LogCombineContext.setParsedPattern(LogCombineUtil.parsePattern(pattern));
+        ParsedPattern parsedPattern = LogCombineUtil.parsePattern(pattern);
+        ParsedPattern oldParsedPattern = LogCombineContext.getParsedPattern();
+        oldParsedPattern.setLogFormat(parsedPattern.getLogFormat());
+        oldParsedPattern.setKeyWordAndOrder(parsedPattern.getKeyWordAndOrder());
+        oldParsedPattern.setClassLength(parsedPattern.getClassLength());
+        oldParsedPattern.setDateFormat(parsedPattern.getDateFormat());
     }
 
     /**

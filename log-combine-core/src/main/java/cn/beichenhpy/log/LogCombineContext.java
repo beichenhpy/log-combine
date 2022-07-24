@@ -38,23 +38,15 @@ public class LogCombineContext {
     private LogCombineContext() {
     }
 
-    private static Configuration configuration = LogCombineUtil.DEFAULT_CONFIGURATION;
-    private static ParsedPattern parsedPattern = LogCombineUtil.DEFAULT_PARSED_PATTERN;
+    private static final Configuration configuration = LogCombineUtil.DEFAULT_CONFIGURATION;
+    private static final ParsedPattern parsedPattern = LogCombineUtil.DEFAULT_PARSED_PATTERN;
 
     protected static Configuration getConfiguration() {
         return LogCombineContext.configuration;
     }
 
-    protected static void setConfiguration(Configuration configuration) {
-        LogCombineContext.configuration = configuration;
-    }
-
     protected static ParsedPattern getParsedPattern() {
         return LogCombineContext.parsedPattern;
-    }
-
-    protected static void setParsedPattern(ParsedPattern parsedPattern) {
-        LogCombineContext.parsedPattern = parsedPattern;
     }
 
     /**
