@@ -25,9 +25,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.slf4j.helpers.MessageFormatter;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 /**
  * 合并打印上下文
  *
@@ -35,6 +32,11 @@ import java.time.format.DateTimeFormatter;
  * @since 0.0.1
  */
 public class LogCombineContext {
+
+    private final ThreadLocal<LogInfo> logLocalStorage = new ThreadLocal<>();
+
+    private LogCombineContext() {
+    }
 
     private static Configuration configuration = LogCombineUtil.DEFAULT_CONFIGURATION;
     private static ParsedPattern parsedPattern = LogCombineUtil.DEFAULT_PARSED_PATTERN;
@@ -47,15 +49,9 @@ public class LogCombineContext {
         LogCombineContext.configuration = configuration;
     }
 
-    private LogCombineContext() {
-    }
-
     protected static ParsedPattern getParsedPattern() {
         return LogCombineContext.parsedPattern;
     }
-
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
-    private final ThreadLocal<LogInfo> logLocalStorage = new ThreadLocal<>();
 
     protected static void setParsedPattern(ParsedPattern parsedPattern) {
         LogCombineContext.parsedPattern = parsedPattern;
@@ -81,9 +77,7 @@ public class LogCombineContext {
      * @param threadName log线程名
      */
     public void addLog(String msg, Integer line, LogLevel level, String className, String threadName, Object... param) {
-        LocalDateTime now = LocalDateTime.now();
-        String time = dateTimeFormatter.format(now);
-        String logMsg = String.format("\n%s - [%s] %s %s - [%s] - %s", time, threadName, level, className, line, msg);
+        String logMsg = LogCombineUtil.formatLog(parsedPattern, msg, line, level, className, threadName);
         String message = MessageFormatter.arrayFormat(logMsg, param).getMessage();
         LogInfo logInfo = getLogLocalStorage();
         if (logInfo == null) {

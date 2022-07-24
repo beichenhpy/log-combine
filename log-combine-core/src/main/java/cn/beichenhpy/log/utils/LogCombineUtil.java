@@ -2,7 +2,10 @@ package cn.beichenhpy.log.utils;
 
 import cn.beichenhpy.log.Configuration;
 import cn.beichenhpy.log.entity.ParsedPattern;
+import cn.beichenhpy.log.enums.LogLevel;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -74,7 +77,7 @@ public class LogCombineUtil {
             return null;
         }
         int originLength = origin.length();
-        if (originLength <= length) {
+        if (originLength <= length || length == -1) {
             return origin;
         }
         String[] originItems = origin.split("\\.");
@@ -152,6 +155,7 @@ public class LogCombineUtil {
         Matcher matcher = datePattern.matcher(item);
         if (matcher.find()) {
             parsedPattern.setDateFormat(matcher.group(1));
+            parsedPattern.setDateTimeFormatter(DateTimeFormatter.ofPattern(matcher.group(1)));
             item = item.replace(matcher.group(), STRING_PATTERN);
         } else {
             //default format
@@ -180,5 +184,51 @@ public class LogCombineUtil {
         return item;
     }
 
+
+    public static String formatLog(ParsedPattern parsedPattern, String msg, Integer line, LogLevel level, String className, String threadName) {
+        Map<String, Integer> keyWordAndOrder = parsedPattern.getKeyWordAndOrder();
+        long size = keyWordAndOrder.values().stream()
+                .filter(order -> order != -1)
+                .count();
+        if (size == 0) {
+            return parsedPattern.getLogFormat();
+        }
+        Object[] args = new Object[(int) size];
+        int i = 0;
+        for (Map.Entry<String, Integer> entry : keyWordAndOrder.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            if (value == -1) {
+                continue;
+            }
+            switch (key) {
+                case LOG_KEY_WORD_DATE:
+                    args[i] = parsedPattern.getDateTimeFormatter().format(LocalDateTime.now());
+                    i++;
+                    break;
+                case LOG_KEY_WORD_THREAD:
+                    args[i] = threadName;
+                    i++;
+                    break;
+                case LOG_KEY_WORD_LEVEL:
+                    args[i] = level.name();
+                    i++;
+                    break;
+                case LOG_KEY_WORD_LINE:
+                    args[i] = line.toString();
+                    i++;
+                    break;
+                case LOG_KEY_WORD_CLASS:
+                    args[i] = curtailReference(className, parsedPattern.getClassLength());
+                    i++;
+                    break;
+                case LOG_KEY_WORD_MSG:
+                    args[i] = msg;
+                    i++;
+                    break;
+            }
+        }
+        return String.format("\n" + parsedPattern.getLogFormat(), args);
+    }
 
 }

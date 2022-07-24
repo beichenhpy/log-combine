@@ -1,3 +1,6 @@
 logging:
   level:
     cn.beichenhpy.log: info
+
+log-combine:
+  pattern: '%date{yyyy-MM-dd} - [%thread] %level %class{20} - [%line] - %msg'

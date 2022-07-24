@@ -1,7 +1,6 @@
 package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.config.SpringLogCombineConfiguration;
-import cn.beichenhpy.log.entity.ParsedPattern;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.StringUtils;
@@ -23,8 +22,6 @@ public class InitialConfigurationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (StringUtils.hasText(logCombineConfiguration.getPattern())) {
             LogCombineHelper.setPattern(logCombineConfiguration.getPattern());
-            ParsedPattern parsedPattern = LogCombineContext.getParsedPattern();
-            System.out.println(parsedPattern);
         }
     }
 }

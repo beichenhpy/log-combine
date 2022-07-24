@@ -3,6 +3,7 @@ package cn.beichenhpy.log.entity;
 import cn.beichenhpy.log.utils.LogCombineUtil;
 import lombok.Data;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
@@ -28,6 +29,10 @@ public class ParsedPattern {
      */
     private String dateFormat = LogCombineUtil.DEFAULT_DATE_FORMAT;
 
+    /**
+     * 日期格式转换
+     */
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(LogCombineUtil.DEFAULT_DATE_FORMAT);
 
     /**
      * 类名的长度限制,默认不限制长度
