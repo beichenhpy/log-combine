@@ -2,12 +2,12 @@ package cn.beichenhpy.log.utils;
 
 import cn.beichenhpy.log.Configuration;
 import cn.beichenhpy.log.entity.ParsedPattern;
-import cn.beichenhpy.log.enums.LogLevel;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -185,7 +185,8 @@ public class LogCombineUtil {
     }
 
 
-    public static String formatLog(ParsedPattern parsedPattern, String msg, Integer line, LogLevel level, String className, String threadName) {
+    public static String formatLog(ParsedPattern parsedPattern, Function<Boolean, Object> getMsg, Function<Boolean, Object> getLine,
+                                   Function<Boolean, Object> getLogLevel, Function<Boolean, Object> getClassName, Function<Boolean, Object> getThreadName) {
         Map<String, Integer> keyWordAndOrder = parsedPattern.getKeyWordAndOrder();
         long size = keyWordAndOrder.values().stream()
                 .filter(order -> order != -1)
@@ -207,23 +208,23 @@ public class LogCombineUtil {
                     i++;
                     break;
                 case LOG_KEY_WORD_THREAD:
-                    args[i] = threadName;
+                    args[i] = getThreadName.apply(true);
                     i++;
                     break;
                 case LOG_KEY_WORD_LEVEL:
-                    args[i] = level.name();
+                    args[i] = getLogLevel.apply(true);
                     i++;
                     break;
                 case LOG_KEY_WORD_LINE:
-                    args[i] = line.toString();
+                    args[i] = getLine.apply(true);
                     i++;
                     break;
                 case LOG_KEY_WORD_CLASS:
-                    args[i] = curtailReference(className, parsedPattern.getClassLength());
+                    args[i] = curtailReference((String) getClassName.apply(true), parsedPattern.getClassLength());
                     i++;
                     break;
                 case LOG_KEY_WORD_MSG:
-                    args[i] = msg;
+                    args[i] = getMsg.apply(true);
                     i++;
                     break;
             }

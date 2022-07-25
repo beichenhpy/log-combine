@@ -65,23 +65,23 @@ public class LogCombineHelper {
 
     /**
      * 获取调用本方法的行 <br>
-     * 三层堆栈 getLineNumber(1) -> info/warn/...(2) -> 具体调用的方法(3)
+     * 六层堆栈 apply(1) -> formatLog(2) -> addLog(3) -> getLineNumber(4) -> info/warn/...(5) -> 具体调用的方法(6)
      *
      * @return 行数
      */
     private static int getInvokeLineNumber() {
-        return Thread.currentThread().getStackTrace()[3].getLineNumber();
+        return Thread.currentThread().getStackTrace()[6].getLineNumber();
     }
 
 
     /**
      * 获取调用本方法的行 <br>
-     * 三层堆栈 getLineNumber(1) -> info/warn/...(2) -> 具体调用的方法(3)
+     * 六层堆栈 apply(1) -> formatLog(2) -> addLog(3) -> getLineNumber(4) -> info/warn/...(5) -> 具体调用的方法(6)
      *
      * @return 行数
      */
     private static String getInvokeClassName() {
-        return Thread.currentThread().getStackTrace()[3].getClassName();
+        return Thread.currentThread().getStackTrace()[6].getClassName();
     }
 
     /**
@@ -104,7 +104,12 @@ public class LogCombineHelper {
         if (!log.isTraceEnabled()) {
             return;
         }
-        context.addLog(msg, getInvokeLineNumber(), LogLevel.TRACE, getInvokeClassName(), getThreadName(), param);
+        context.addLog(show -> show ? msg : "",
+                show -> show ? getInvokeLineNumber() : "",
+                show -> show ? LogLevel.TRACE : "",
+                show -> show ? getInvokeClassName() : "",
+                show -> show ? getThreadName() : "",
+                param);
     }
 
     /**
@@ -117,7 +122,12 @@ public class LogCombineHelper {
         if (!log.isDebugEnabled()) {
             return;
         }
-        context.addLog(msg, getInvokeLineNumber(), LogLevel.DEBUG, getInvokeClassName(), getThreadName(), param);
+        context.addLog(show -> show ? msg : "",
+                show -> show ? getInvokeLineNumber() : "",
+                show -> show ? LogLevel.DEBUG : "",
+                show -> show ? getInvokeClassName() : "",
+                show -> show ? getThreadName() : "",
+                param);
     }
 
 
@@ -131,7 +141,12 @@ public class LogCombineHelper {
         if (!log.isInfoEnabled()) {
             return;
         }
-        context.addLog(msg, getInvokeLineNumber(), LogLevel.INFO, getInvokeClassName(), getThreadName(), param);
+        context.addLog(show -> show ? msg : "",
+                show -> show ? getInvokeLineNumber() : "",
+                show -> show ? LogLevel.INFO : "",
+                show -> show ? getInvokeClassName() : "",
+                show -> show ? getThreadName() : "",
+                param);
     }
 
     /**
@@ -144,7 +159,12 @@ public class LogCombineHelper {
         if (!log.isWarnEnabled()) {
             return;
         }
-        context.addLog(msg, getInvokeLineNumber(), LogLevel.WARN, getInvokeClassName(), getThreadName(), param);
+        context.addLog(show -> show ? msg : "",
+                show -> show ? getInvokeLineNumber() : "",
+                show -> show ? LogLevel.WARN : "",
+                show -> show ? getInvokeClassName() : "",
+                show -> show ? getThreadName() : "",
+                param);
     }
 
     /**
@@ -157,7 +177,12 @@ public class LogCombineHelper {
         if (!log.isErrorEnabled()) {
             return;
         }
-        context.addLog(msg, getInvokeLineNumber(), LogLevel.ERROR, getInvokeClassName(), getThreadName(), param);
+        context.addLog(show -> show ? msg : "",
+                show -> show ? getInvokeLineNumber() : "",
+                show -> show ? LogLevel.ERROR : "",
+                show -> show ? getInvokeClassName() : "",
+                show -> show ? getThreadName() : "",
+                param);
     }
 
     /**
