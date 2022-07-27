@@ -17,7 +17,7 @@
 
 package cn.beichenhpy.log.config;
 
-import cn.beichenhpy.log.InitialConfigurationRunner;
+import cn.beichenhpy.log.LogCombineHelper;
 import cn.beichenhpy.log.aspect.LogCombinePrintAspect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,21 +31,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LogCombineAutoConfig {
 
-
-    @Bean
-    public LogCombinePrintAspect logCombinePrintAspect() {
-        return new LogCombinePrintAspect();
-    }
-
-
     @Bean
     public SpringLogCombineConfiguration springLogCombineConfiguration() {
         return new SpringLogCombineConfiguration();
     }
 
+
     @Bean
-    public InitialConfigurationRunner initialConfigurationRunner() {
-        return new InitialConfigurationRunner();
+    public LogCombinePrintAspect logCombinePrintAspect() {
+        //init pattern
+        LogCombineHelper.setPattern(springLogCombineConfiguration().getPattern());
+        return new LogCombinePrintAspect();
     }
+
 
 }
