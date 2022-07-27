@@ -4,7 +4,6 @@ import cn.beichenhpy.log.utils.LogCombineUtil;
 import lombok.Data;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -38,8 +37,5 @@ public class ParsedPattern {
     /**
      * 日志格式关键字及对应的顺序
      */
-    private List<String> keyWords = new LinkedList<>(
-            Arrays.asList(LogCombineUtil.LOG_KEY_WORD_DATE, LogCombineUtil.LOG_KEY_WORD_THREAD, LogCombineUtil.LOG_KEY_WORD_LEVEL,
-                    LogCombineUtil.LOG_KEY_WORD_CLASS, LogCombineUtil.LOG_KEY_WORD_LINE, LogCombineUtil.LOG_KEY_WORD_MSG)
-    );
+    private List<String> keyWords = new LinkedList<>(LogCombineUtil.DEFAULT_KEY_WORDS);
 }
