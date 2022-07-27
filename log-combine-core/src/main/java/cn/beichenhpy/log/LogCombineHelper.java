@@ -20,8 +20,7 @@ package cn.beichenhpy.log;
 import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.enums.LogLevel;
 import cn.beichenhpy.log.utils.LogCombineUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 日志合并打印工具类,使用方式
@@ -39,9 +38,8 @@ import org.slf4j.LoggerFactory;
  * @author beichenhpy
  * @since 0.0.1
  */
+@Slf4j
 public class LogCombineHelper {
-
-    private static final Logger log = LoggerFactory.getLogger(LogCombineHelper.class);
     /**
      * 日志存储上下文
      */

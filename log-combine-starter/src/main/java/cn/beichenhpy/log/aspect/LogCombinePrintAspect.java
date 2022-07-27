@@ -18,12 +18,11 @@
 package cn.beichenhpy.log.aspect;
 
 import cn.beichenhpy.log.LogCombineHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 日志合并打印切面
@@ -31,10 +30,9 @@ import org.slf4j.LoggerFactory;
  * @author beichenhpy
  * @since 0.0.1
  */
+@Slf4j
 @Aspect
 public class LogCombinePrintAspect {
-
-    private static final Logger log = LoggerFactory.getLogger(LogCombinePrintAspect.class);
 
     @Pointcut(value = "@annotation(cn.beichenhpy.log.annotation.LogCombine)")
     public void pointCut() {
