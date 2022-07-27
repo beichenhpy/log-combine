@@ -24,12 +24,12 @@ public class LogCombineUtil {
     public static final String DEFAULT_LOG_FORMAT = "%s - [%s] %s %s - [%s] - %s";
     public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
     public static final Integer DEFAULT_CLASS_LENGTH = -1;
-    public static final ParsedPattern DEFAULT_PARSED_PATTERN = new ParsedPattern();
-    public static final Configuration DEFAULT_CONFIGURATION = new Configuration();
     public static final List<String> DEFAULT_KEY_WORDS = Arrays.asList(
             LogCombineUtil.LOG_KEY_WORD_DATE, LogCombineUtil.LOG_KEY_WORD_THREAD,
             LogCombineUtil.LOG_KEY_WORD_LEVEL, LogCombineUtil.LOG_KEY_WORD_CLASS,
             LogCombineUtil.LOG_KEY_WORD_LINE, LogCombineUtil.LOG_KEY_WORD_MSG);
+    public static final ParsedPattern DEFAULT_PARSED_PATTERN = new ParsedPattern();
+    public static final Configuration DEFAULT_CONFIGURATION = new Configuration();
     /**
      * key word
      */
