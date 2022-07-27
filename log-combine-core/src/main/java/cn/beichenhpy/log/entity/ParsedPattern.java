@@ -4,7 +4,10 @@ import cn.beichenhpy.log.utils.LogCombineUtil;
 import lombok.Data;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * 翻译后的日志模式格式
@@ -23,26 +26,20 @@ public class ParsedPattern {
     private String logFormat = LogCombineUtil.DEFAULT_LOG_FORMAT;
 
     /**
-     * 日期格式
-     *
-     * @see cn.beichenhpy.log.utils.LogCombineUtil#DEFAULT_DATE_FORMAT
+     * 日期格式转换队列 支持多个
      */
-    private String dateFormat = LogCombineUtil.DEFAULT_DATE_FORMAT;
+    private Queue<DateTimeFormatter> dateTimeFormatters = new LinkedList<>();
 
     /**
-     * 日期格式转换
+     * 类名的长度限制 支持多个
      */
-    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(this.dateFormat);
+    private Queue<Integer> classLengths = new LinkedList<>();
 
     /**
-     * 类名的长度限制,默认不限制长度
-     *
-     * @see cn.beichenhpy.log.utils.LogCombineUtil#DEFAULT_CLASS_LENGTH
+     * 日志格式关键字及对应的顺序
      */
-    private int classLength = LogCombineUtil.DEFAULT_CLASS_LENGTH;
-
-    /**
-     * 日志格式关键字及对应的顺序 没有则为-1
-     */
-    private Map<String, Integer> keyWordAndOrder = LogCombineUtil.DEFAULT_KEYWORD_ORDER;
+    private List<String> keyWords = new LinkedList<>(
+            Arrays.asList(LogCombineUtil.LOG_KEY_WORD_DATE, LogCombineUtil.LOG_KEY_WORD_THREAD, LogCombineUtil.LOG_KEY_WORD_LEVEL,
+                    LogCombineUtil.LOG_KEY_WORD_CLASS, LogCombineUtil.LOG_KEY_WORD_LINE, LogCombineUtil.LOG_KEY_WORD_MSG)
+    );
 }

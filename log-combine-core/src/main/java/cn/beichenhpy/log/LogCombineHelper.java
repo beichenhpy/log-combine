@@ -56,11 +56,11 @@ public class LogCombineHelper {
     public static void setPattern(String pattern) {
         LogCombineContext.getConfiguration().setPattern(pattern);
         ParsedPattern parsedPattern = LogCombineUtil.parsePattern(pattern);
-        ParsedPattern oldParsedPattern = LogCombineContext.getParsedPattern();
-        oldParsedPattern.setLogFormat(parsedPattern.getLogFormat());
-        oldParsedPattern.setKeyWordAndOrder(parsedPattern.getKeyWordAndOrder());
-        oldParsedPattern.setClassLength(parsedPattern.getClassLength());
-        oldParsedPattern.setDateFormat(parsedPattern.getDateFormat());
+        ParsedPattern applyParsedPattern = LogCombineContext.getParsedPattern();
+        applyParsedPattern.setLogFormat(parsedPattern.getLogFormat());
+        applyParsedPattern.setKeyWords(parsedPattern.getKeyWords());
+        applyParsedPattern.setClassLengths(parsedPattern.getClassLengths());
+        applyParsedPattern.setDateTimeFormatters(parsedPattern.getDateTimeFormatters());
     }
 
     /**

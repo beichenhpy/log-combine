@@ -5,8 +5,9 @@ import cn.beichenhpy.log.entity.ParsedPattern;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,48 +21,22 @@ import java.util.regex.Pattern;
 public class LogCombineUtil {
     public static final String DEFAULT_PATTERN = "%date - [%thread] %level %class - [%line] - %msg";
     public static final String DEFAULT_LOG_FORMAT = "%s - [%s] %s %s - [%s] - %s";
-    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss,SSS";
+    public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
     public static final int DEFAULT_CLASS_LENGTH = -1;
-    public static final Map<String, Integer> DEFAULT_KEYWORD_ORDER = new LinkedHashMap<>(8);
     public static final ParsedPattern DEFAULT_PARSED_PATTERN = new ParsedPattern();
     public static final Configuration DEFAULT_CONFIGURATION = new Configuration();
     /**
      * key word
      */
-    protected static final String STRING_PATTERN = "%s";
-    protected static final String LOG_KEY_WORD_DATE = "date";
-    protected static final String LOG_KEY_WORD_DATE_REGEX = "date\\{(.*?)}";
-    protected static final String LOG_KEY_WORD_THREAD = "thread";
-    protected static final String LOG_KEY_WORD_LEVEL = "level";
-    protected static final String LOG_KEY_WORD_CLASS = "class";
-    protected static final String LOG_KEY_WORD_CLASS_REGEX = "class\\{(.*?)}";
-    protected static final String LOG_KEY_WORD_LINE = "line";
-    protected static final String LOG_KEY_WORD_MSG = "msg";
-
-    static {
-        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_DATE, 0);
-        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_THREAD, 1);
-        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_LEVEL, 2);
-        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_CLASS, 3);
-        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_LINE, 4);
-        DEFAULT_KEYWORD_ORDER.put(LOG_KEY_WORD_MSG, 5);
-    }
-
-    /**
-     * 初始化空的关键字排序
-     *
-     * @return 返回空的关键字排序
-     */
-    private static Map<String, Integer> initEmptyKeywordOrder() {
-        Map<String, Integer> empty = new LinkedHashMap<>();
-        empty.put(LOG_KEY_WORD_DATE, -1);
-        empty.put(LOG_KEY_WORD_THREAD, -1);
-        empty.put(LOG_KEY_WORD_LEVEL, -1);
-        empty.put(LOG_KEY_WORD_CLASS, -1);
-        empty.put(LOG_KEY_WORD_LINE, -1);
-        empty.put(LOG_KEY_WORD_MSG, -1);
-        return empty;
-    }
+    public static final String STRING_PATTERN = "%s";
+    public static final String LOG_KEY_WORD_DATE = "date";
+    public static final String LOG_KEY_WORD_DATE_REGEX = "date\\{(.*?)}";
+    public static final String LOG_KEY_WORD_THREAD = "thread";
+    public static final String LOG_KEY_WORD_LEVEL = "level";
+    public static final String LOG_KEY_WORD_CLASS = "class";
+    public static final String LOG_KEY_WORD_CLASS_REGEX = "class\\{(.*?)}";
+    public static final String LOG_KEY_WORD_LINE = "line";
+    public static final String LOG_KEY_WORD_MSG = "msg";
 
     /**
      * 根据指定长度缩短全限定类名的包名部分
@@ -95,50 +70,47 @@ public class LogCombineUtil {
 
 
     /**
-     * 解析
+     * 编译期解析
      */
     public static ParsedPattern parsePattern(String pattern) {
         if (DEFAULT_PATTERN.equals(pattern)) {
             return DEFAULT_PARSED_PATTERN;
         }
         ParsedPattern parsedPattern = new ParsedPattern();
-        Map<String, Integer> keywordAndOrder = initEmptyKeywordOrder();
+        List<String> keywords = new LinkedList<>();
         String[] patternArrays = pattern.split("%");
         StringBuilder logFormatBuilder = new StringBuilder();
-        for (int i = 0; i < patternArrays.length; i++) {
-            String item = patternArrays[i];
-            if ("".equals(item)) {
-                continue;
-            }
+        for (String patternArray : patternArrays) {
+            String item = patternArray;
             if (item.startsWith(LOG_KEY_WORD_DATE)) {
                 //date
                 item = parseDate(parsedPattern, item);
-                keywordAndOrder.put(LOG_KEY_WORD_DATE, i);
+                keywords.add(LOG_KEY_WORD_DATE);
             } else if (item.startsWith(LOG_KEY_WORD_CLASS)) {
                 //class
                 item = parseClass(parsedPattern, item);
-                keywordAndOrder.put(LOG_KEY_WORD_CLASS, i);
+                keywords.add(LOG_KEY_WORD_CLASS);
             } else if (item.startsWith(LOG_KEY_WORD_LEVEL)) {
                 //level
                 item = item.replace(LOG_KEY_WORD_LEVEL, STRING_PATTERN);
-                keywordAndOrder.put(LOG_KEY_WORD_LEVEL, i);
+                keywords.add(LOG_KEY_WORD_LEVEL);
             } else if (item.startsWith(LOG_KEY_WORD_LINE)) {
                 //line
                 item = item.replace(LOG_KEY_WORD_LINE, STRING_PATTERN);
-                keywordAndOrder.put(LOG_KEY_WORD_LINE, i);
+                keywords.add(LOG_KEY_WORD_LINE);
             } else if (item.startsWith(LOG_KEY_WORD_THREAD)) {
                 //thread
                 item = item.replace(LOG_KEY_WORD_THREAD, STRING_PATTERN);
-                keywordAndOrder.put(LOG_KEY_WORD_THREAD, i);
+                keywords.add(LOG_KEY_WORD_THREAD);
             } else if (item.startsWith(LOG_KEY_WORD_MSG)) {
                 //msg
                 item = item.replace(LOG_KEY_WORD_MSG, STRING_PATTERN);
-                keywordAndOrder.put(LOG_KEY_WORD_MSG, i);
+                keywords.add(LOG_KEY_WORD_MSG);
             }
             logFormatBuilder.append(item);
         }
         parsedPattern.setLogFormat(logFormatBuilder.toString());
-        parsedPattern.setKeyWordAndOrder(keywordAndOrder);
+        parsedPattern.setKeyWords(keywords);
         return parsedPattern;
     }
 
@@ -154,8 +126,7 @@ public class LogCombineUtil {
         Pattern datePattern = Pattern.compile(LOG_KEY_WORD_DATE_REGEX);
         Matcher matcher = datePattern.matcher(item);
         if (matcher.find()) {
-            parsedPattern.setDateFormat(matcher.group(1));
-            parsedPattern.setDateTimeFormatter(DateTimeFormatter.ofPattern(matcher.group(1)));
+            parsedPattern.getDateTimeFormatters().add(DateTimeFormatter.ofPattern(matcher.group(1)));
             item = item.replace(matcher.group(), STRING_PATTERN);
         } else {
             //default format
@@ -175,7 +146,7 @@ public class LogCombineUtil {
         Pattern datePattern = Pattern.compile(LOG_KEY_WORD_CLASS_REGEX);
         Matcher matcher = datePattern.matcher(item);
         if (matcher.find()) {
-            parsedPattern.setClassLength(Integer.parseInt(matcher.group(1)));
+            parsedPattern.getClassLengths().add(Integer.valueOf(matcher.group(1)));
             item = item.replace(matcher.group(), STRING_PATTERN);
         } else {
             //default format
@@ -185,26 +156,24 @@ public class LogCombineUtil {
     }
 
 
+    /**
+     * 格式化日志 运行期
+     */
     public static String formatLog(ParsedPattern parsedPattern, Function<Boolean, Object> getMsg, Function<Boolean, Object> getLine,
                                    Function<Boolean, Object> getLogLevel, Function<Boolean, Object> getClassName, Function<Boolean, Object> getThreadName) {
-        Map<String, Integer> keyWordAndOrder = parsedPattern.getKeyWordAndOrder();
-        long size = keyWordAndOrder.values().stream()
-                .filter(order -> order != -1)
-                .count();
-        if (size == 0) {
-            return parsedPattern.getLogFormat();
-        }
-        Object[] args = new Object[(int) size];
+        final Queue<DateTimeFormatter> cloneDateFormatters = new LinkedList<>(parsedPattern.getDateTimeFormatters());
+        final Queue<Integer> cloneClassLengths = new LinkedList<>(parsedPattern.getClassLengths());
+        List<String> keyWords = parsedPattern.getKeyWords();
+        Object[] args = new Object[keyWords.size()];
         int i = 0;
-        for (Map.Entry<String, Integer> entry : keyWordAndOrder.entrySet()) {
-            String key = entry.getKey();
-            Integer value = entry.getValue();
-            if (value == -1) {
-                continue;
-            }
-            switch (key) {
+        for (String keyWord : keyWords) {
+            switch (keyWord) {
                 case LOG_KEY_WORD_DATE:
-                    args[i] = parsedPattern.getDateTimeFormatter().format(LocalDateTime.now());
+                    DateTimeFormatter formatter = cloneDateFormatters.poll();
+                    if (formatter == null) {
+                        formatter = DEFAULT_DATE_FORMATTER;
+                    }
+                    args[i] = formatter.format(LocalDateTime.now());
                     i++;
                     break;
                 case LOG_KEY_WORD_THREAD:
@@ -220,7 +189,11 @@ public class LogCombineUtil {
                     i++;
                     break;
                 case LOG_KEY_WORD_CLASS:
-                    args[i] = curtailReference((String) getClassName.apply(true), parsedPattern.getClassLength());
+                    Integer length = cloneClassLengths.poll();
+                    if (length == null) {
+                        length = DEFAULT_CLASS_LENGTH;
+                    }
+                    args[i] = curtailReference((String) getClassName.apply(true), length);
                     i++;
                     break;
                 case LOG_KEY_WORD_MSG:
