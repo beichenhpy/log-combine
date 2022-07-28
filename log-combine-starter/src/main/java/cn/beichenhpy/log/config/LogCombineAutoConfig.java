@@ -21,6 +21,7 @@ import cn.beichenhpy.log.LogCombineHelper;
 import cn.beichenhpy.log.aspect.LogCombinePrintAspect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 /**
  * 自动装配
@@ -40,7 +41,9 @@ public class LogCombineAutoConfig {
     @Bean
     public LogCombinePrintAspect logCombinePrintAspect() {
         //init pattern
-        LogCombineHelper.setPattern(springLogCombineConfiguration().getPattern());
+        if (StringUtils.hasText(springLogCombineConfiguration().getPattern())) {
+            LogCombineHelper.setPattern(springLogCombineConfiguration().getPattern());
+        }
         return new LogCombinePrintAspect();
     }
 

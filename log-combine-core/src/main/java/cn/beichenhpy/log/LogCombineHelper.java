@@ -22,6 +22,8 @@ import cn.beichenhpy.log.enums.LogLevel;
 import cn.beichenhpy.log.utils.LogCombineUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.management.ManagementFactory;
+
 /**
  * 日志合并打印工具类,使用方式
  * <pre>
@@ -52,12 +54,16 @@ public class LogCombineHelper {
      * @param pattern 格式
      */
     public static void setPattern(String pattern) {
+        if (LogCombineUtil.DEFAULT_PATTERN.equals(pattern)) {
+            log.debug("same pattern, ignore update pattern");
+            return;
+        }
         LogCombineContext.getConfiguration().setPattern(pattern);
         ParsedPattern parsedPattern = LogCombineUtil.parsePattern(pattern);
         ParsedPattern applyParsedPattern = LogCombineContext.getParsedPattern();
         applyParsedPattern.setLogFormat(parsedPattern.getLogFormat());
         applyParsedPattern.setKeyWords(parsedPattern.getKeyWords());
-        applyParsedPattern.setClassLengths(parsedPattern.getClassLengths());
+        applyParsedPattern.setLoggerLengths(parsedPattern.getLoggerLengths());
         applyParsedPattern.setDateTimeFormatters(parsedPattern.getDateTimeFormatters());
     }
 
@@ -91,6 +97,17 @@ public class LogCombineHelper {
         return Thread.currentThread().getName();
     }
 
+    /**
+     * 获取当前进程id
+     *
+     * @return 返回id
+     */
+    private static Integer getPid() {
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        String[] names = name.split("@");
+        return Integer.valueOf(names[0]);
+    }
+
 
     /**
      * 添加TRACE
@@ -105,6 +122,7 @@ public class LogCombineHelper {
         context.addLog(show -> show ? msg : "",
                 show -> show ? getInvokeLineNumber() : "",
                 show -> show ? LogLevel.TRACE : "",
+                show -> show ? getPid() : "",
                 show -> show ? getInvokeClassName() : "",
                 show -> show ? getThreadName() : "",
                 param);
@@ -123,6 +141,7 @@ public class LogCombineHelper {
         context.addLog(show -> show ? msg : "",
                 show -> show ? getInvokeLineNumber() : "",
                 show -> show ? LogLevel.DEBUG : "",
+                show -> show ? getPid() : "",
                 show -> show ? getInvokeClassName() : "",
                 show -> show ? getThreadName() : "",
                 param);
@@ -142,6 +161,7 @@ public class LogCombineHelper {
         context.addLog(show -> show ? msg : "",
                 show -> show ? getInvokeLineNumber() : "",
                 show -> show ? LogLevel.INFO : "",
+                show -> show ? getPid() : "",
                 show -> show ? getInvokeClassName() : "",
                 show -> show ? getThreadName() : "",
                 param);
@@ -160,6 +180,7 @@ public class LogCombineHelper {
         context.addLog(show -> show ? msg : "",
                 show -> show ? getInvokeLineNumber() : "",
                 show -> show ? LogLevel.WARN : "",
+                show -> show ? getPid() : "",
                 show -> show ? getInvokeClassName() : "",
                 show -> show ? getThreadName() : "",
                 param);
@@ -178,6 +199,7 @@ public class LogCombineHelper {
         context.addLog(show -> show ? msg : "",
                 show -> show ? getInvokeLineNumber() : "",
                 show -> show ? LogLevel.ERROR : "",
+                show -> show ? getPid() : "",
                 show -> show ? getInvokeClassName() : "",
                 show -> show ? getThreadName() : "",
                 param);

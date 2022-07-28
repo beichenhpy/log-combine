@@ -39,8 +39,9 @@ public class LogCombineContext {
     private LogCombineContext() {
     }
 
-    private static final Configuration configuration = LogCombineUtil.DEFAULT_CONFIGURATION;
-    private static final ParsedPattern parsedPattern = LogCombineUtil.DEFAULT_PARSED_PATTERN;
+    private static final Configuration configuration = new Configuration();
+
+    private static final ParsedPattern parsedPattern = LogCombineUtil.parsePattern(configuration.getPattern());
 
     protected static Configuration getConfiguration() {
         return LogCombineContext.configuration;
@@ -65,13 +66,13 @@ public class LogCombineContext {
      * @param getMsg        消息
      * @param getLine       当前行
      * @param getLogLevel   日志等级
-     * @param getClassName  当前类名
+     * @param getLogger     当前类名
      * @param param         可变长参数
      * @param getThreadName log线程名
      */
-    public void addLog(Function<Boolean, Object> getMsg, Function<Boolean, Object> getLine, Function<Boolean, Object> getLogLevel,
-                       Function<Boolean, Object> getClassName, Function<Boolean, Object> getThreadName, Object... param) {
-        String logMsg = LogCombineUtil.formatLog(parsedPattern, getMsg, getLine, getLogLevel, getClassName, getThreadName);
+    public void addLog(Function<Boolean, Object> getMsg, Function<Boolean, Object> getLine, Function<Boolean, Object> getLogLevel, Function<Boolean, Object> getPid,
+                       Function<Boolean, Object> getLogger, Function<Boolean, Object> getThreadName, Object... param) {
+        String logMsg = LogCombineUtil.formatLog(parsedPattern, getMsg, getLine, getPid, getLogLevel, getLogger, getThreadName);
         String message = MessageFormatter.arrayFormat(logMsg, param).getMessage();
         LogInfo logInfo = getLogLocalStorage();
         if (logInfo == null) {

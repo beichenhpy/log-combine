@@ -1,6 +1,5 @@
 package cn.beichenhpy.log.entity;
 
-import cn.beichenhpy.log.utils.LogCombineUtil;
 import lombok.Data;
 
 import java.time.format.DateTimeFormatter;
@@ -22,7 +21,7 @@ public class ParsedPattern {
      *     %s - [%s] %s %s - [%s] - %s
      * </pre>
      */
-    private String logFormat = LogCombineUtil.DEFAULT_LOG_FORMAT;
+    private String logFormat;
 
     /**
      * 日期格式转换队列 支持多个
@@ -32,10 +31,10 @@ public class ParsedPattern {
     /**
      * 类名的长度限制 支持多个
      */
-    private Queue<Integer> classLengths = new LinkedList<>();
+    private Queue<Integer> loggerLengths = new LinkedList<>();
 
     /**
      * 日志格式关键字及对应的顺序
      */
-    private List<String> keyWords = new LinkedList<>(LogCombineUtil.DEFAULT_KEY_WORDS);
+    private List<String> keyWords;
 }
