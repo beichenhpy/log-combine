@@ -1,7 +1,6 @@
 # log-combine
 
-🎆 现在支持异步非阻塞线程使用啦！  
-现有的打印方式改为，同步线程日志打印，异步日志线程单独打印出来。
+🎆 新特性: 支持自定义日志格式
 
 ```text
 2022-05-08 10:50:02.315  INFO 20390 --- [nio-8080-exec-6] c.b.log.context.LogCombineHelper : 
@@ -17,6 +16,7 @@
 
 1. 支持异步线程的日志合并打印
 2. 支持根据用户设置日志等级来生成合并的日志
+3. 支持自定义日志格式
 
 ## 一个用于合并打印日志的工具包
 
@@ -187,3 +187,12 @@ class SampleService {
    }
 }
 ```
+
+5. 自定义日志格式
+   支持类似与`Logback`的关键字 `%date` `%thread` `%level` `%class` `%line` `%msg` `pid`
+   1. `%date` 支持自定义格式使用大括号括起来 ex: `年月日：%date{yyyy-MM-dd}`
+   2. `%class`支持class自定义长度显示 ex: `类名：%class{25}`
+
+默认打印格式为: `%date{yyyy-MM-dd HH:mm:ss,SSS} %level %pid --- [%thread]  %logger{35} - [%line] :%msg`  
+`%date`的默认值为: `yyyy-MM-dd HH:mm:ss,SSS`   
+`%class`的默认为 `35`
