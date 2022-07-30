@@ -1,13 +1,13 @@
 package cn.beichenhpy.log.utils;
 
 import cn.beichenhpy.log.entity.ParsedPattern;
+import cn.beichenhpy.log.enums.LogLevel;
 
+import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.function.Function;
+import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +34,47 @@ public class LogCombineUtil {
     public static final String LOG_KEY_WORD_LOGGER_REGEX = "logger\\{(.*?)}";
     public static final String LOG_KEY_WORD_LINE = "line";
     public static final String LOG_KEY_WORD_MSG = "msg";
+
+
+    /**
+     * 获取调用本方法的行 <br>
+     *
+     * @return 行数
+     */
+    private static Supplier<Object> getInvokeLineNumberSupplier() {
+        return () -> Thread.currentThread().getStackTrace()[5].getLineNumber();
+    }
+
+
+    /**
+     * 获取调用本方法的行 <br>
+     *
+     * @return 行数
+     */
+    private static Supplier<Object> getInvokeClassNameSupplier() {
+        return () -> Thread.currentThread().getStackTrace()[5].getClassName();
+    }
+
+    /**
+     * 获取当前线程名
+     *
+     * @return 线程名
+     */
+    private static Supplier<Object> getThreadNameSupplier() {
+        return () -> Thread.currentThread().getName();
+    }
+
+    /**
+     * 获取当前进程id
+     *
+     * @return 返回id
+     */
+    private static Supplier<Object> getPidSupplier() {
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        String[] names = name.split("@");
+        return () -> Integer.valueOf(names[0]);
+    }
+
 
     /**
      * 根据指定长度缩短全限定类名的包名部分
@@ -72,6 +113,7 @@ public class LogCombineUtil {
     public static ParsedPattern parsePattern(String pattern) {
         ParsedPattern parsedPattern = new ParsedPattern();
         List<String> keywords = new LinkedList<>();
+        Map<String, Supplier<Object>> keywordAndSupplierMap = new HashMap<>(4);
         String[] patternArrays = pattern.split("%");
         StringBuilder logFormatBuilder = new StringBuilder();
         for (String patternArray : patternArrays) {
@@ -84,6 +126,7 @@ public class LogCombineUtil {
                 //logger
                 item = parseLogger(parsedPattern, item);
                 keywords.add(LOG_KEY_WORD_LOGGER);
+                keywordAndSupplierMap.put(LOG_KEY_WORD_LOGGER, getInvokeClassNameSupplier());
             } else if (item.startsWith(LOG_KEY_WORD_LEVEL)) {
                 //level
                 item = item.replace(LOG_KEY_WORD_LEVEL, STRING_PATTERN);
@@ -92,10 +135,12 @@ public class LogCombineUtil {
                 //line
                 item = item.replace(LOG_KEY_WORD_LINE, STRING_PATTERN);
                 keywords.add(LOG_KEY_WORD_LINE);
+                keywordAndSupplierMap.put(LOG_KEY_WORD_LINE, getInvokeLineNumberSupplier());
             } else if (item.startsWith(LOG_KEY_WORD_THREAD)) {
                 //thread
                 item = item.replace(LOG_KEY_WORD_THREAD, STRING_PATTERN);
                 keywords.add(LOG_KEY_WORD_THREAD);
+                keywordAndSupplierMap.put(LOG_KEY_WORD_THREAD, getThreadNameSupplier());
             } else if (item.startsWith(LOG_KEY_WORD_MSG)) {
                 //msg
                 item = item.replace(LOG_KEY_WORD_MSG, STRING_PATTERN);
@@ -104,11 +149,13 @@ public class LogCombineUtil {
                 //pid
                 item = item.replace(LOG_KEY_WORD_PID, STRING_PATTERN);
                 keywords.add(LOG_KEY_WORD_PID);
+                keywordAndSupplierMap.put(LOG_KEY_WORD_PID, getPidSupplier());
             }
             logFormatBuilder.append(item);
         }
         parsedPattern.setLogFormat(logFormatBuilder.toString());
         parsedPattern.setKeyWords(keywords);
+        parsedPattern.setKeywordAndSupplierMap(keywordAndSupplierMap);
         return parsedPattern;
     }
 
@@ -157,11 +204,11 @@ public class LogCombineUtil {
     /**
      * 格式化日志 运行期
      */
-    public static String formatLog(ParsedPattern parsedPattern, Function<Boolean, Object> getMsg, Function<Boolean, Object> getLine, Function<Boolean, Object> getPid,
-                                   Function<Boolean, Object> getLogLevel, Function<Boolean, Object> getLogger, Function<Boolean, Object> getThreadName) {
+    public static String formatLog(ParsedPattern parsedPattern, String msg, LogLevel level) {
         final Queue<DateTimeFormatter> cloneDateFormatters = new LinkedList<>(parsedPattern.getDateTimeFormatters());
         final Queue<Integer> cloneLoggerLengths = new LinkedList<>(parsedPattern.getLoggerLengths());
         List<String> keyWords = parsedPattern.getKeyWords();
+        Map<String, Supplier<Object>> keywordAndSupplierMap = parsedPattern.getKeywordAndSupplierMap();
         Object[] args = new Object[keyWords.size()];
         int i = 0;
         for (String keyWord : keyWords) {
@@ -175,15 +222,15 @@ public class LogCombineUtil {
                     i++;
                     break;
                 case LOG_KEY_WORD_THREAD:
-                    args[i] = getThreadName.apply(true);
+                    args[i] = keywordAndSupplierMap.get(LOG_KEY_WORD_THREAD).get();
                     i++;
                     break;
                 case LOG_KEY_WORD_LEVEL:
-                    args[i] = getLogLevel.apply(true);
+                    args[i] = level;
                     i++;
                     break;
                 case LOG_KEY_WORD_LINE:
-                    args[i] = getLine.apply(true);
+                    args[i] = keywordAndSupplierMap.get(LOG_KEY_WORD_LINE).get();
                     i++;
                     break;
                 case LOG_KEY_WORD_LOGGER:
@@ -191,15 +238,15 @@ public class LogCombineUtil {
                     if (length == null) {
                         length = DEFAULT_LOGGER_LENGTH;
                     }
-                    args[i] = curtailReference((String) getLogger.apply(true), length);
+                    args[i] = curtailReference((String) keywordAndSupplierMap.get(LOG_KEY_WORD_LOGGER).get(), length);
                     i++;
                     break;
                 case LOG_KEY_WORD_MSG:
-                    args[i] = getMsg.apply(true);
+                    args[i] = msg;
                     i++;
                     break;
                 case LOG_KEY_WORD_PID:
-                    args[i] = getPid.apply(true);
+                    args[i] = keywordAndSupplierMap.get(LOG_KEY_WORD_PID).get();
                     i++;
                     break;
             }

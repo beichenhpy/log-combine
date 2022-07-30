@@ -5,7 +5,9 @@ import lombok.Data;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.function.Supplier;
 
 /**
  * 翻译后的日志模式格式
@@ -37,4 +39,9 @@ public class ParsedPattern {
      * 日志格式关键字及对应的顺序
      */
     private List<String> keyWords;
+
+    /**
+     * pattern获取对应的值需要的哈希
+     */
+    private Map<String, Supplier<Object>> keywordAndSupplierMap;
 }

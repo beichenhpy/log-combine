@@ -18,13 +18,12 @@
 package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.entity.ParsedPattern;
+import cn.beichenhpy.log.enums.LogLevel;
 import cn.beichenhpy.log.utils.LogCombineUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.slf4j.helpers.MessageFormatter;
-
-import java.util.function.Function;
 
 /**
  * 合并打印上下文
@@ -67,16 +66,12 @@ public class LogCombineContext {
     /**
      * 添加日志到上下文
      *
-     * @param getMsg        消息
-     * @param getLine       当前行
-     * @param getLogLevel   日志等级
-     * @param getLogger     当前类名
-     * @param param         可变长参数
-     * @param getThreadName log线程名
+     * @param msg   消息内容
+     * @param level 日志等级
+     * @param param 可变长参数
      */
-    public void addLog(Function<Boolean, Object> getMsg, Function<Boolean, Object> getLine, Function<Boolean, Object> getLogLevel, Function<Boolean, Object> getPid,
-                       Function<Boolean, Object> getLogger, Function<Boolean, Object> getThreadName, Object... param) {
-        String logMsg = LogCombineUtil.formatLog(parsedPattern, getMsg, getLine, getPid, getLogLevel, getLogger, getThreadName);
+    public void addLog(String msg, LogLevel level, Object... param) {
+        String logMsg = LogCombineUtil.formatLog(parsedPattern, msg, level);
         String message = MessageFormatter.arrayFormat(logMsg, param).getMessage();
         LogInfo logInfo = getLogLocalStorage();
         if (logInfo == null) {

@@ -21,8 +21,6 @@ import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.enums.LogLevel;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.management.ManagementFactory;
-
 /**
  * 日志合并打印工具类,使用方式
  * <pre>
@@ -66,47 +64,6 @@ public class LogCombineHelper {
         parsedPattern.setDateTimeFormatters(newParsedPattern.getDateTimeFormatters());
     }
 
-    /**
-     * 获取调用本方法的行 <br>
-     * 六层堆栈 apply(1) -> formatLog(2) -> addLog(3) -> getLineNumber(4) -> info/warn/...(5) -> 具体调用的方法(6)
-     *
-     * @return 行数
-     */
-    private static int getInvokeLineNumber() {
-        return Thread.currentThread().getStackTrace()[6].getLineNumber();
-    }
-
-
-    /**
-     * 获取调用本方法的行 <br>
-     * 六层堆栈 apply(1) -> formatLog(2) -> addLog(3) -> getLineNumber(4) -> info/warn/...(5) -> 具体调用的方法(6)
-     *
-     * @return 行数
-     */
-    private static String getInvokeClassName() {
-        return Thread.currentThread().getStackTrace()[6].getClassName();
-    }
-
-    /**
-     * 获取当前线程名
-     *
-     * @return 线程名
-     */
-    private static String getThreadName() {
-        return Thread.currentThread().getName();
-    }
-
-    /**
-     * 获取当前进程id
-     *
-     * @return 返回id
-     */
-    private static Integer getPid() {
-        String name = ManagementFactory.getRuntimeMXBean().getName();
-        String[] names = name.split("@");
-        return Integer.valueOf(names[0]);
-    }
-
 
     /**
      * 添加TRACE
@@ -118,13 +75,7 @@ public class LogCombineHelper {
         if (!log.isTraceEnabled()) {
             return;
         }
-        context.addLog(show -> show ? msg : "",
-                show -> show ? getInvokeLineNumber() : "",
-                show -> show ? LogLevel.TRACE : "",
-                show -> show ? getPid() : "",
-                show -> show ? getInvokeClassName() : "",
-                show -> show ? getThreadName() : "",
-                param);
+        context.addLog(msg, LogLevel.TRACE, param);
     }
 
     /**
@@ -137,13 +88,7 @@ public class LogCombineHelper {
         if (!log.isDebugEnabled()) {
             return;
         }
-        context.addLog(show -> show ? msg : "",
-                show -> show ? getInvokeLineNumber() : "",
-                show -> show ? LogLevel.DEBUG : "",
-                show -> show ? getPid() : "",
-                show -> show ? getInvokeClassName() : "",
-                show -> show ? getThreadName() : "",
-                param);
+        context.addLog(msg, LogLevel.DEBUG, param);
     }
 
 
@@ -157,13 +102,7 @@ public class LogCombineHelper {
         if (!log.isInfoEnabled()) {
             return;
         }
-        context.addLog(show -> show ? msg : "",
-                show -> show ? getInvokeLineNumber() : "",
-                show -> show ? LogLevel.INFO : "",
-                show -> show ? getPid() : "",
-                show -> show ? getInvokeClassName() : "",
-                show -> show ? getThreadName() : "",
-                param);
+        context.addLog(msg, LogLevel.INFO, param);
     }
 
     /**
@@ -176,13 +115,7 @@ public class LogCombineHelper {
         if (!log.isWarnEnabled()) {
             return;
         }
-        context.addLog(show -> show ? msg : "",
-                show -> show ? getInvokeLineNumber() : "",
-                show -> show ? LogLevel.WARN : "",
-                show -> show ? getPid() : "",
-                show -> show ? getInvokeClassName() : "",
-                show -> show ? getThreadName() : "",
-                param);
+        context.addLog(msg, LogLevel.WARN, param);
     }
 
     /**
@@ -195,13 +128,7 @@ public class LogCombineHelper {
         if (!log.isErrorEnabled()) {
             return;
         }
-        context.addLog(show -> show ? msg : "",
-                show -> show ? getInvokeLineNumber() : "",
-                show -> show ? LogLevel.ERROR : "",
-                show -> show ? getPid() : "",
-                show -> show ? getInvokeClassName() : "",
-                show -> show ? getThreadName() : "",
-                param);
+        context.addLog(msg, LogLevel.ERROR, param);
     }
 
     /**
