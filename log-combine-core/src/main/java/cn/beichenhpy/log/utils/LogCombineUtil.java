@@ -114,10 +114,9 @@ public class LogCombineUtil {
         ParsedPattern parsedPattern = new ParsedPattern();
         List<String> keywords = new LinkedList<>();
         Map<String, Supplier<Object>> keywordAndSupplierMap = new HashMap<>(4);
-        String[] patternArrays = pattern.split("%");
         StringBuilder logFormatBuilder = new StringBuilder();
-        for (String patternArray : patternArrays) {
-            String item = patternArray;
+        String[] patternArrays = pattern.split("%");
+        for (String item : patternArrays) {
             if (item.startsWith(LOG_KEY_WORD_DATE)) {
                 //date
                 item = parseDate(parsedPattern, item);
