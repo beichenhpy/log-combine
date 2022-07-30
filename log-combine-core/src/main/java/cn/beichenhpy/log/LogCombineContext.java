@@ -41,7 +41,7 @@ public class LogCombineContext {
 
     private static final Configuration configuration = new Configuration();
 
-    private static final ParsedPattern parsedPattern = LogCombineUtil.parsePattern(configuration.getPattern());
+    private static final ParsedPattern parsedPattern = loadPattern();
 
     protected static Configuration getConfiguration() {
         return LogCombineContext.configuration;
@@ -49,6 +49,10 @@ public class LogCombineContext {
 
     protected static ParsedPattern getParsedPattern() {
         return LogCombineContext.parsedPattern;
+    }
+
+    protected static ParsedPattern loadPattern() {
+        return LogCombineUtil.parsePattern(configuration.getPattern());
     }
 
     /**

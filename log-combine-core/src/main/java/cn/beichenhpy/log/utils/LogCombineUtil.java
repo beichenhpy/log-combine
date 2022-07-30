@@ -141,8 +141,8 @@ public class LogCombineUtil {
      * @return 返回类名的样式格式化后的字符串
      */
     private static String parseLogger(ParsedPattern parsedPattern, String item) {
-        Pattern datePattern = Pattern.compile(LOG_KEY_WORD_LOGGER_REGEX);
-        Matcher matcher = datePattern.matcher(item);
+        Pattern loggerPattern = Pattern.compile(LOG_KEY_WORD_LOGGER_REGEX);
+        Matcher matcher = loggerPattern.matcher(item);
         if (matcher.find()) {
             parsedPattern.getLoggerLengths().add(Integer.valueOf(matcher.group(1)));
             item = item.replace(matcher.group(), STRING_PATTERN);

@@ -19,7 +19,6 @@ package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.enums.LogLevel;
-import cn.beichenhpy.log.utils.LogCombineUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.management.ManagementFactory;
@@ -54,17 +53,17 @@ public class LogCombineHelper {
      * @param pattern 格式
      */
     public static void setPattern(String pattern) {
-        if (LogCombineUtil.DEFAULT_PATTERN.equals(pattern)) {
-            log.debug("same pattern, ignore update pattern");
-            return;
-        }
         LogCombineContext.getConfiguration().setPattern(pattern);
-        ParsedPattern parsedPattern = LogCombineUtil.parsePattern(pattern);
-        ParsedPattern applyParsedPattern = LogCombineContext.getParsedPattern();
-        applyParsedPattern.setLogFormat(parsedPattern.getLogFormat());
-        applyParsedPattern.setKeyWords(parsedPattern.getKeyWords());
-        applyParsedPattern.setLoggerLengths(parsedPattern.getLoggerLengths());
-        applyParsedPattern.setDateTimeFormatters(parsedPattern.getDateTimeFormatters());
+        reloadPattern();
+    }
+
+    private static void reloadPattern() {
+        ParsedPattern newParsedPattern = LogCombineContext.loadPattern();
+        ParsedPattern parsedPattern = LogCombineContext.getParsedPattern();
+        parsedPattern.setLogFormat(newParsedPattern.getLogFormat());
+        parsedPattern.setKeyWords(newParsedPattern.getKeyWords());
+        parsedPattern.setLoggerLengths(newParsedPattern.getLoggerLengths());
+        parsedPattern.setDateTimeFormatters(newParsedPattern.getDateTimeFormatters());
     }
 
     /**
