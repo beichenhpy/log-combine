@@ -43,9 +43,9 @@ public class LogCombineUtil {
     public static final String LOG_KEY_WORD_LINE = "line";
     public static final String LOG_KEY_WORD_MSG = "msg";
     public static final String LOG_KEY_WORD_DATE = "date";
-    public static final String LOG_KEY_WORD_DATE_REGEX = "date\\{(.*?)}";
+    public static final String LOG_KEY_WORD_DATE_REGEX = LOG_KEY_WORD_DATE + "\\{(.*?)}";
     public static final String LOG_KEY_WORD_LOGGER = "logger";
-    public static final String LOG_KEY_WORD_LOGGER_REGEX = "logger\\{(.\\d?)}";
+    public static final String LOG_KEY_WORD_LOGGER_REGEX = LOG_KEY_WORD_LOGGER + "\\{(.\\d?)}";
 
 
     /**
