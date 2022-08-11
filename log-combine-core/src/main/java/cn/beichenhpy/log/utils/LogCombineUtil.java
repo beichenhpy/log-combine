@@ -204,21 +204,23 @@ public class LogCombineUtil {
      * 格式化日志 运行期
      */
     public static String formatLog(ParsedPattern parsedPattern, String msg, LogLevel level) {
-        final Queue<DateTimeFormatter> cloneDateFormatters = new LinkedList<>(parsedPattern.getDateTimeFormatters());
-        final Queue<Integer> cloneLoggerLengths = new LinkedList<>(parsedPattern.getLoggerLengths());
-        List<String> keyWords = parsedPattern.getKeyWords();
-        Map<String, Supplier<Object>> keywordAndSupplierMap = parsedPattern.getKeywordAndSupplierMap();
-        Object[] args = new Object[keyWords.size()];
+        final Deque<DateTimeFormatter> dateTimeFormatters = parsedPattern.getDateTimeFormatters();
+        final Deque<Integer> loggerLengths = parsedPattern.getLoggerLengths();
+        final List<String> keyWords = parsedPattern.getKeyWords();
+        final Map<String, Supplier<Object>> keywordAndSupplierMap = parsedPattern.getKeywordAndSupplierMap();
+        final Object[] args = new Object[keyWords.size()];
         int i = 0;
         for (String keyWord : keyWords) {
             switch (keyWord) {
                 case LOG_KEY_WORD_DATE:
-                    DateTimeFormatter formatter = cloneDateFormatters.poll();
+                    DateTimeFormatter formatter = dateTimeFormatters.poll();
                     if (formatter == null) {
                         formatter = DEFAULT_DATE_FORMATTER;
                     }
                     args[i] = formatter.format(LocalDateTime.now());
                     i++;
+                    //重新放入队尾
+                    dateTimeFormatters.addLast(formatter);
                     break;
                 case LOG_KEY_WORD_THREAD:
                     args[i] = keywordAndSupplierMap.get(LOG_KEY_WORD_THREAD).get();
@@ -233,12 +235,13 @@ public class LogCombineUtil {
                     i++;
                     break;
                 case LOG_KEY_WORD_LOGGER:
-                    Integer length = cloneLoggerLengths.poll();
+                    Integer length = loggerLengths.poll();
                     if (length == null) {
                         length = DEFAULT_LOGGER_LENGTH;
                     }
                     args[i] = curtailReference((String) keywordAndSupplierMap.get(LOG_KEY_WORD_LOGGER).get(), length);
                     i++;
+                    loggerLengths.addLast(length);
                     break;
                 case LOG_KEY_WORD_MSG:
                     args[i] = msg;

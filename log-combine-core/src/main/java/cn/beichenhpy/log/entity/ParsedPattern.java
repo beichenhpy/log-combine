@@ -3,10 +3,10 @@ package cn.beichenhpy.log.entity;
 import lombok.Data;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.function.Supplier;
 
 /**
@@ -28,12 +28,12 @@ public class ParsedPattern {
     /**
      * 日期格式转换队列 支持多个
      */
-    private Queue<DateTimeFormatter> dateTimeFormatters = new LinkedList<>();
+    private Deque<DateTimeFormatter> dateTimeFormatters = new LinkedList<>();
 
     /**
      * 类名的长度限制 支持多个
      */
-    private Queue<Integer> loggerLengths = new LinkedList<>();
+    private Deque<Integer> loggerLengths = new LinkedList<>();
 
     /**
      * 日志格式关键字及对应的顺序
