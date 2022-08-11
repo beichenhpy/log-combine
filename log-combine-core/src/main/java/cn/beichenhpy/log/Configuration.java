@@ -43,7 +43,7 @@ public class Configuration {
     private String pattern = LogCombineUtil.DEFAULT_PATTERN;
 
     /**
-     * 重新设置pattern 并重新初始化参数
+     * 设置pattern 并重新初始化参数
      *
      * @param pattern 日志格式
      */
