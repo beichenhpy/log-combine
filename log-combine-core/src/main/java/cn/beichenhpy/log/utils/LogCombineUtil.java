@@ -178,7 +178,7 @@ public class LogCombineUtil {
         Pattern datePattern = Pattern.compile(LOG_KEY_WORD_DATE_REGEX);
         Matcher matcher = datePattern.matcher(item);
         if (matcher.find()) {
-            parsedPattern.getDateTimeFormatters().add(DateTimeFormatter.ofPattern(matcher.group(1)));
+            parsedPattern.getDateTimeFormatters().addLast(DateTimeFormatter.ofPattern(matcher.group(1)));
             item = item.replace(matcher.group(), STRING_PATTERN);
         } else {
             //default format
@@ -198,7 +198,7 @@ public class LogCombineUtil {
         Pattern loggerPattern = Pattern.compile(LOG_KEY_WORD_LOGGER_REGEX);
         Matcher matcher = loggerPattern.matcher(item);
         if (matcher.find()) {
-            parsedPattern.getLoggerLengths().add(Integer.valueOf(matcher.group(1)));
+            parsedPattern.getLoggerLengths().addLast(Integer.valueOf(matcher.group(1)));
             item = item.replace(matcher.group(), STRING_PATTERN);
         } else {
             //default format
