@@ -2,11 +2,15 @@ package cn.beichenhpy.log.utils;
 
 import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.enums.LogLevel;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +21,7 @@ import java.util.regex.Pattern;
  * @author beichenhpy
  * @since 0.0.1
  */
+@Slf4j
 public class LogCombineUtil {
     public static final String DEFAULT_PATTERN = "%date{yyyy-MM-dd HH:mm:ss,SSS}  %level %pid --- [%thread]  %logger{35} - [%line] :%msg";
     public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
@@ -40,7 +45,7 @@ public class LogCombineUtil {
     public static final String LOG_KEY_WORD_DATE = "date";
     public static final String LOG_KEY_WORD_DATE_REGEX = "date\\{(.*?)}";
     public static final String LOG_KEY_WORD_LOGGER = "logger";
-    public static final String LOG_KEY_WORD_LOGGER_REGEX = "logger\\{(.*?)}";
+    public static final String LOG_KEY_WORD_LOGGER_REGEX = "logger\\{(.\\d?)}";
 
 
     /**
@@ -177,14 +182,30 @@ public class LogCombineUtil {
         //date
         Pattern datePattern = Pattern.compile(LOG_KEY_WORD_DATE_REGEX);
         Matcher matcher = datePattern.matcher(item);
+        DateTimeFormatter dateTimeFormatter = DEFAULT_DATE_FORMATTER;
         if (matcher.find()) {
-            parsedPattern.getDateTimeFormatters().addLast(DateTimeFormatter.ofPattern(matcher.group(1)));
+            dateTimeFormatter = getDateTimeFormatter(matcher.group(1));
             item = item.replace(matcher.group(), STRING_PATTERN);
         } else {
             //default format
             item = item.replace(LOG_KEY_WORD_DATE, STRING_PATTERN);
         }
+        parsedPattern.getDateTimeFormatters().add(dateTimeFormatter);
         return item;
+    }
+
+
+    private static DateTimeFormatter getDateTimeFormatter(String datePattern) {
+        if (datePattern.length() == 0) {
+            return DEFAULT_DATE_FORMATTER;
+        }
+        DateTimeFormatter dateTimeFormatter;
+        try {
+            dateTimeFormatter = DateTimeFormatter.ofPattern(datePattern);
+        } catch (IllegalArgumentException e) {
+            dateTimeFormatter = DEFAULT_DATE_FORMATTER;
+        }
+        return dateTimeFormatter;
     }
 
     /**
@@ -197,13 +218,15 @@ public class LogCombineUtil {
     private static String parseLogger(ParsedPattern parsedPattern, String item) {
         Pattern loggerPattern = Pattern.compile(LOG_KEY_WORD_LOGGER_REGEX);
         Matcher matcher = loggerPattern.matcher(item);
+        Integer length = DEFAULT_LOGGER_LENGTH;
         if (matcher.find()) {
-            parsedPattern.getLoggerLengths().addLast(Integer.valueOf(matcher.group(1)));
+            length = Integer.valueOf(matcher.group(1));
             item = item.replace(matcher.group(), STRING_PATTERN);
         } else {
             //default format
             item = item.replace(LOG_KEY_WORD_LOGGER, STRING_PATTERN);
         }
+        parsedPattern.getLoggerLengths().add(length);
         return item;
     }
 
@@ -211,53 +234,56 @@ public class LogCombineUtil {
     /**
      * 格式化日志 运行期
      */
-    public static synchronized String formatLog(ParsedPattern parsedPattern, String msg, LogLevel level) {
-        final Deque<DateTimeFormatter> dateTimeFormatters = parsedPattern.getDateTimeFormatters();
-        final Deque<Integer> loggerLengths = parsedPattern.getLoggerLengths();
+    public static String formatLog(ParsedPattern parsedPattern, String msg, LogLevel level) {
+        final List<DateTimeFormatter> dateTimeFormatters = parsedPattern.getDateTimeFormatters();
+        final List<Integer> loggerLengths = parsedPattern.getLoggerLengths();
         final List<String> keyWords = parsedPattern.getKeyWords();
         final Map<String, Supplier<Object>> keywordAndSupplierMap = parsedPattern.getKeywordAndSupplierMap();
         final Object[] args = new Object[keyWords.size()];
-        int i = 0;
+        int argIndex = 0, dateFormatterIndex = 0, loggerLengthIndex = 0;
         for (String keyWord : keyWords) {
             switch (keyWord) {
                 case LOG_KEY_WORD_DATE:
-                    DateTimeFormatter formatter = dateTimeFormatters.poll();
-                    if (formatter == null) {
-                        formatter = DEFAULT_DATE_FORMATTER;
+                    DateTimeFormatter dateTimeFormatter;
+                    if (dateFormatterIndex >= dateTimeFormatters.size()) {
+                        dateTimeFormatter = DEFAULT_DATE_FORMATTER;
+                    } else {
+                        dateTimeFormatter = dateTimeFormatters.get(dateFormatterIndex);
                     }
-                    args[i] = formatter.format(LocalDateTime.now());
-                    i++;
-                    //重新放入队尾
-                    dateTimeFormatters.addLast(formatter);
+                    args[argIndex] = dateTimeFormatter.format(LocalDateTime.now());
+                    argIndex++;
+                    dateFormatterIndex++;
                     break;
                 case LOG_KEY_WORD_THREAD:
-                    args[i] = keywordAndSupplierMap.get(LOG_KEY_WORD_THREAD).get();
-                    i++;
+                    args[argIndex] = keywordAndSupplierMap.get(LOG_KEY_WORD_THREAD).get();
+                    argIndex++;
                     break;
                 case LOG_KEY_WORD_LEVEL:
-                    args[i] = level;
-                    i++;
+                    args[argIndex] = level;
+                    argIndex++;
                     break;
                 case LOG_KEY_WORD_LINE:
-                    args[i] = keywordAndSupplierMap.get(LOG_KEY_WORD_LINE).get();
-                    i++;
+                    args[argIndex] = keywordAndSupplierMap.get(LOG_KEY_WORD_LINE).get();
+                    argIndex++;
                     break;
                 case LOG_KEY_WORD_LOGGER:
-                    Integer length = loggerLengths.poll();
-                    if (length == null) {
+                    int length;
+                    if (loggerLengthIndex >= loggerLengths.size()) {
                         length = DEFAULT_LOGGER_LENGTH;
+                    } else {
+                        length = loggerLengths.get(loggerLengthIndex);
                     }
-                    args[i] = curtailReference((String) keywordAndSupplierMap.get(LOG_KEY_WORD_LOGGER).get(), length);
-                    i++;
-                    loggerLengths.addLast(length);
+                    args[argIndex] = curtailReference((String) keywordAndSupplierMap.get(LOG_KEY_WORD_LOGGER).get(), length);
+                    argIndex++;
+                    loggerLengthIndex++;
                     break;
                 case LOG_KEY_WORD_MSG:
-                    args[i] = msg;
-                    i++;
+                    args[argIndex] = msg;
+                    argIndex++;
                     break;
                 case LOG_KEY_WORD_PID:
-                    args[i] = keywordAndSupplierMap.get(LOG_KEY_WORD_PID).get();
-                    i++;
+                    args[argIndex] = keywordAndSupplierMap.get(LOG_KEY_WORD_PID).get();
+                    argIndex++;
                     break;
             }
         }
