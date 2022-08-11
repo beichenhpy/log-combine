@@ -17,8 +17,8 @@
 
 package cn.beichenhpy.log;
 
-import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.enums.LogLevel;
+import cn.beichenhpy.log.utils.LogCombineUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -52,16 +52,6 @@ public class LogCombineHelper {
      */
     public static void setPattern(String pattern) {
         LogCombineContext.getConfiguration().setPattern(pattern);
-        reloadPattern();
-    }
-
-    private static void reloadPattern() {
-        ParsedPattern newParsedPattern = LogCombineContext.loadPattern();
-        ParsedPattern parsedPattern = LogCombineContext.getParsedPattern();
-        parsedPattern.setLogFormat(newParsedPattern.getLogFormat());
-        parsedPattern.setKeyWords(newParsedPattern.getKeyWords());
-        parsedPattern.setLoggerLengths(newParsedPattern.getLoggerLengths());
-        parsedPattern.setDateTimeFormatters(newParsedPattern.getDateTimeFormatters());
     }
 
 
@@ -166,15 +156,15 @@ public class LogCombineHelper {
             String logMsg = context.getLog(true);
             if (logMsg != null) {
                 if (log.isTraceEnabled()) {
-                    log.trace("{}", logMsg);
+                    log.trace(LogCombineUtil.CURLY, logMsg);
                 } else if (log.isDebugEnabled()) {
-                    log.debug("{}", logMsg);
+                    log.debug(LogCombineUtil.CURLY, logMsg);
                 } else if (log.isInfoEnabled()) {
-                    log.info("{}", logMsg);
+                    log.info(LogCombineUtil.CURLY, logMsg);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("{}", logMsg);
+                    log.warn(LogCombineUtil.CURLY, logMsg);
                 } else if (log.isErrorEnabled()) {
-                    log.error("{}", logMsg);
+                    log.error(LogCombineUtil.CURLY, logMsg);
                 }
             }
         }

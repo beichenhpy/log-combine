@@ -21,19 +21,26 @@ public class LogCombineUtil {
     public static final String DEFAULT_PATTERN = "%date{yyyy-MM-dd HH:mm:ss,SSS}  %level %pid --- [%thread]  %logger{35} - [%line] :%msg";
     public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
     public static final Integer DEFAULT_LOGGER_LENGTH = 35;
+    public static final String STRING_PATTERN = "%s";
+    public static final String PERCENT = "%";
+    public static final String AT = "@";
+    public static final String DOT = ".";
+    public static final String DOT_REGEX = "\\.";
+    public static final String LF = "\n";
+    public static final String CURLY = "{}";
+
     /**
      * key word
      */
-    public static final String STRING_PATTERN = "%s";
     public static final String LOG_KEY_WORD_PID = "pid";
-    public static final String LOG_KEY_WORD_DATE = "date";
-    public static final String LOG_KEY_WORD_DATE_REGEX = "date\\{(.*?)}";
     public static final String LOG_KEY_WORD_THREAD = "thread";
     public static final String LOG_KEY_WORD_LEVEL = "level";
-    public static final String LOG_KEY_WORD_LOGGER = "logger";
-    public static final String LOG_KEY_WORD_LOGGER_REGEX = "logger\\{(.*?)}";
     public static final String LOG_KEY_WORD_LINE = "line";
     public static final String LOG_KEY_WORD_MSG = "msg";
+    public static final String LOG_KEY_WORD_DATE = "date";
+    public static final String LOG_KEY_WORD_DATE_REGEX = "date\\{(.*?)}";
+    public static final String LOG_KEY_WORD_LOGGER = "logger";
+    public static final String LOG_KEY_WORD_LOGGER_REGEX = "logger\\{(.*?)}";
 
 
     /**
@@ -71,7 +78,7 @@ public class LogCombineUtil {
      */
     private static Supplier<Object> getPidSupplier() {
         String name = ManagementFactory.getRuntimeMXBean().getName();
-        String[] names = name.split("@");
+        String[] names = name.split(AT);
         return () -> Integer.valueOf(names[0]);
     }
 
@@ -93,17 +100,17 @@ public class LogCombineUtil {
         if (originLength <= length || length <= 0) {
             return origin;
         }
-        String[] originItems = origin.split("\\.");
+        String[] originItems = origin.split(DOT_REGEX);
         String[] curtailItems = new String[originItems.length];
         System.arraycopy(originItems, 0, curtailItems, 0, originItems.length);
         for (int i = 0; i < originItems.length - 1; i++) {
             curtailItems[i] = originItems[i].substring(0, 1);
             int currentLength = originLength - (originItems[i].length() - 1);
             if (currentLength <= length) {
-                return String.join(".", curtailItems);
+                return String.join(DOT, curtailItems);
             }
         }
-        return String.join(".", curtailItems);
+        return String.join(DOT, curtailItems);
     }
 
 
@@ -115,7 +122,7 @@ public class LogCombineUtil {
         List<String> keywords = new LinkedList<>();
         Map<String, Supplier<Object>> keywordAndSupplierMap = new HashMap<>(4);
         StringBuilder logFormatBuilder = new StringBuilder();
-        String[] patternArrays = pattern.split("%");
+        String[] patternArrays = pattern.split(PERCENT);
         for (String item : patternArrays) {
             if (item.startsWith(LOG_KEY_WORD_DATE)) {
                 //date
@@ -150,6 +157,7 @@ public class LogCombineUtil {
                 keywords.add(LOG_KEY_WORD_PID);
                 keywordAndSupplierMap.put(LOG_KEY_WORD_PID, getPidSupplier());
             }
+            //todo 考虑扩展性 避免大量的if-else
             logFormatBuilder.append(item);
         }
         parsedPattern.setLogFormat(logFormatBuilder.toString());
@@ -253,7 +261,7 @@ public class LogCombineUtil {
                     break;
             }
         }
-        return String.format("\n" + parsedPattern.getLogFormat(), args);
+        return String.format(LF + parsedPattern.getLogFormat(), args);
     }
 
 }

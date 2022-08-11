@@ -18,9 +18,10 @@
 package cn.beichenhpy.log;
 
 
+import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.utils.LogCombineUtil;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -29,7 +30,7 @@ import lombok.NoArgsConstructor;
  * @author beichenhpy
  * @since 0.0.2
  */
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Configuration {
@@ -41,4 +42,18 @@ public class Configuration {
      */
     private String pattern = LogCombineUtil.DEFAULT_PATTERN;
 
+    /**
+     * 重新设置pattern 并重新初始化参数
+     *
+     * @param pattern 日志格式
+     */
+    protected void setPattern(String pattern) {
+        this.pattern = pattern;
+        ParsedPattern newParsedPattern = LogCombineContext.loadPattern();
+        ParsedPattern parsedPattern = LogCombineContext.getParsedPattern();
+        parsedPattern.setLogFormat(newParsedPattern.getLogFormat());
+        parsedPattern.setKeyWords(newParsedPattern.getKeyWords());
+        parsedPattern.setLoggerLengths(newParsedPattern.getLoggerLengths());
+        parsedPattern.setDateTimeFormatters(newParsedPattern.getDateTimeFormatters());
+    }
 }
