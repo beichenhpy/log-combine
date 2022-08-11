@@ -211,7 +211,7 @@ public class LogCombineUtil {
     /**
      * 格式化日志 运行期
      */
-    public static String formatLog(ParsedPattern parsedPattern, String msg, LogLevel level) {
+    public static synchronized String formatLog(ParsedPattern parsedPattern, String msg, LogLevel level) {
         final Deque<DateTimeFormatter> dateTimeFormatters = parsedPattern.getDateTimeFormatters();
         final Deque<Integer> loggerLengths = parsedPattern.getLoggerLengths();
         final List<String> keyWords = parsedPattern.getKeyWords();

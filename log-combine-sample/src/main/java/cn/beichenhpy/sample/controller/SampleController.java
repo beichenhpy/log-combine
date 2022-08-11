@@ -107,4 +107,27 @@ public class SampleController {
         //manual print
         LogCombineHelper.print();
     }
+
+    @GetMapping("parallel-test")
+    @LogCombine
+    public void parallelTest() {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        executorService.execute(
+                () -> {
+                    LogCombineHelper.info("1test1");
+                    LogCombineHelper.info("1test1");
+                    LogCombineHelper.info("1test1");
+                    LogCombineHelper.print();
+                }
+        );
+        executorService.execute(
+                () -> {
+                    LogCombineHelper.info("2test2");
+                    LogCombineHelper.info("2test2");
+                    LogCombineHelper.info("2test2");
+                    LogCombineHelper.info("2test2");
+                    LogCombineHelper.print();
+                }
+        );
+    }
 }
