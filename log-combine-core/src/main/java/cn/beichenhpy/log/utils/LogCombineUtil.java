@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -124,7 +124,7 @@ public class LogCombineUtil {
      */
     public static ParsedPattern parsePattern(String pattern) {
         ParsedPattern parsedPattern = new ParsedPattern();
-        List<String> keywords = new LinkedList<>();
+        List<String> keywords = new ArrayList<>();
         Map<String, Supplier<Object>> keywordAndSupplierMap = new HashMap<>(4);
         StringBuilder logFormatBuilder = new StringBuilder();
         String[] patternArrays = pattern.split(PERCENT);
