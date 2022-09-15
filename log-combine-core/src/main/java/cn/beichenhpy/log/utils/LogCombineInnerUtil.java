@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * @since 0.0.1
  */
 @Slf4j
-public class LogCombineUtil {
+public class LogCombineInnerUtil {
     public static final String DEFAULT_PATTERN = "%date{yyyy-MM-dd HH:mm:ss,SSS}  %level %pid --- [%thread]  %logger{35} - [%line] :%msg";
     public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
     public static final Integer DEFAULT_LOGGER_LENGTH = 35;

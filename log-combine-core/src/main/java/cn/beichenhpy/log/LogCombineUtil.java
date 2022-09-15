@@ -18,7 +18,7 @@
 package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.enums.LogLevel;
-import cn.beichenhpy.log.utils.LogCombineUtil;
+import cn.beichenhpy.log.utils.LogCombineInnerUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,10 +27,10 @@ import lombok.extern.slf4j.Slf4j;
  *     //在具体方法中使用
  *     public void test(){
  *         String a = "foo";
- *         LogCombineHelper.info("测试:{}", a);
- *         LogCombineHelper.warn("测试2:{}", a);
+ *         LogCombineUtil.info("测试:{}", a);
+ *         LogCombineUtil.warn("测试2:{}", a);
  *         //打印日志
- *         LogCombineHelper.print();
+ *         LogCombineUtil.print();
  *     }
  * </pre>
  *
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 0.0.1
  */
 @Slf4j
-public class LogCombineHelper {
+public class LogCombineUtil {
     /**
      * 日志存储上下文
      */
@@ -156,15 +156,15 @@ public class LogCombineHelper {
             String logMsg = context.getLog(true);
             if (logMsg != null) {
                 if (log.isTraceEnabled()) {
-                    log.trace(LogCombineUtil.CURLY, logMsg);
+                    log.trace(LogCombineInnerUtil.CURLY, logMsg);
                 } else if (log.isDebugEnabled()) {
-                    log.debug(LogCombineUtil.CURLY, logMsg);
+                    log.debug(LogCombineInnerUtil.CURLY, logMsg);
                 } else if (log.isInfoEnabled()) {
-                    log.info(LogCombineUtil.CURLY, logMsg);
+                    log.info(LogCombineInnerUtil.CURLY, logMsg);
                 } else if (log.isWarnEnabled()) {
-                    log.warn(LogCombineUtil.CURLY, logMsg);
+                    log.warn(LogCombineInnerUtil.CURLY, logMsg);
                 } else if (log.isErrorEnabled()) {
-                    log.error(LogCombineUtil.CURLY, logMsg);
+                    log.error(LogCombineInnerUtil.CURLY, logMsg);
                 }
             }
         }

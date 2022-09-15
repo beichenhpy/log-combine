@@ -17,7 +17,7 @@
 
 package cn.beichenhpy.log.aspect;
 
-import cn.beichenhpy.log.LogCombineHelper;
+import cn.beichenhpy.log.LogCombineUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -41,17 +41,17 @@ public class LogCombinePrintAspect {
 
     @Before(value = "pointCut()")
     public void preLog() {
-        LogCombineHelper.pushNest();
+        LogCombineUtil.pushNest();
     }
 
     @After(value = "pointCut()")
     public void logPrint() {
         try {
-            LogCombineHelper.popNest();
+            LogCombineUtil.popNest();
         } catch (Throwable e) {
             log.error("error:{},{}", e.getMessage(), e);
         } finally {
-            LogCombineHelper.print();
+            LogCombineUtil.print();
         }
     }
 }

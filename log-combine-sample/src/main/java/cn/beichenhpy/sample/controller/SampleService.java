@@ -17,7 +17,7 @@
 
 package cn.beichenhpy.sample.controller;
 
-import cn.beichenhpy.log.LogCombineHelper;
+import cn.beichenhpy.log.LogCombineUtil;
 import cn.beichenhpy.log.annotation.LogCombine;
 import org.springframework.stereotype.Service;
 
@@ -34,12 +34,12 @@ public class SampleService {
 
     @LogCombine
     public void test2() {
-        LogCombineHelper.info("service:{}", 2);
+        LogCombineUtil.info("service:{}", 2);
     }
 
 
     public void test3() {
-        LogCombineHelper.info("test3:{}", "test333");
-        LogCombineHelper.print();
+        LogCombineUtil.info("test3:{}", "test333");
+        LogCombineUtil.print();
     }
 }

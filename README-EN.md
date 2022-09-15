@@ -4,15 +4,15 @@
 The print result is as follows:
 
 ```text
-2022-05-08 10:50:02.315  INFO 20390 --- [nio-8080-exec-6] c.b.log.context.LogCombineHelper : 
+2022-05-08 10:50:02.315  INFO 20390 --- [nio-8080-exec-6] c.b.log.context.LogCombineUtil : 
 2022-05-08 10:50:02,313 - [http-nio-8080-exec-6] INFO cn.beichenhpy.sample.controller.SampleController - [71] - test:1,2
 2022-05-08 10:50:02,313 - [http-nio-8080-exec-6] DEBUG cn.beichenhpy.sample.controller.SampleController - [72] - test2:3,4
 2022-05-08 10:50:02,314 - [http-nio-8080-exec-6] DEBUG cn.beichenhpy.sample.controller.SampleService - [43] - test3:test333
-2022-05-08 10:50:06.318  INFO 20390 --- [pool-4-thread-1] c.b.log.context.LogCombineHelper : 
+2022-05-08 10:50:06.318  INFO 20390 --- [pool-4-thread-1] c.b.log.context.LogCombineUtil : 
 2022-05-08 10:50:02,314 - [pool-4-thread-1] DEBUG cn.beichenhpy.sample.controller.SampleController - [79] - test3:5
 ```
 
-【notice】 📢:`LogCombineHelper.pushNest()`and`LogCombineHelper.popNest()`can not mixed `@LogCombine`
+【notice】 📢:`LogCombineUtil.pushNest()`and`LogCombineUtil.popNest()`can not mixed `@LogCombine`
 
 【feature】
 
@@ -41,23 +41,23 @@ you can see `log-combine-sample`, this is a simple example.
 </dependency>
 ```
 
-2. use `LogCombineHelper.info/error/..` in a method and use `LogCombineHelper.print`
+2. use `LogCombineUtil.info/error/..` in a method and use `LogCombineUtil.print`
 
 ```java
 
 class Test {
    public void test() {
       // do something
-      LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
+      LogCombineUtil.info("this is a test method, you can use it like {}", "logback");
       //print your logs
-      LogCombineHelper.print();
+      LogCombineUtil.print();
    }
 }
 
 ```
 
-3. if you nest `LogCombineHelper.print()`, then you need use `LogCombineHelper.pushNest()`
-   and `LogCombineHelper.popNest()`
+3. if you nest `LogCombineUtil.print()`, then you need use `LogCombineUtil.pushNest()`
+   and `LogCombineUtil.popNest()`
 
 example：
 
@@ -65,17 +65,17 @@ example：
 class Test0 {
    @SneakyThrows
    public void test2() {
-      LogCombineHelper.info("test:{},{}", 1, 2);
-      LogCombineHelper.warn("test2:{},{}", 3, 4);
+      LogCombineUtil.info("test:{},{}", 1, 2);
+      LogCombineUtil.warn("test2:{},{}", 3, 4);
       //nest
-      LogCombineHelper.pushNest();
+      LogCombineUtil.pushNest();
       sampleService.test3();
-      LogCombineHelper.popNest();
+      LogCombineUtil.popNest();
       ExecutorService executorService = Executors.newFixedThreadPool(10);
       //support but you need to manual print
       executorService.execute(
               () -> {
-                 LogCombineHelper.warn("test3:{}", 5);
+                 LogCombineUtil.warn("test3:{}", 5);
                  try {
                     Thread.sleep(4000);
                  } catch (InterruptedException e) {
@@ -83,42 +83,42 @@ class Test0 {
                  }
                  //There is nesting here, if you call the pushNest method before the method and then call popNest, 
                  // it will cause the after nest print log to split
-                 LogCombineHelper.pushNest();
+                 LogCombineUtil.pushNest();
                  sampleService.test3();
-                 LogCombineHelper.popNest();
-                 LogCombineHelper.info("after nest print:{}", "after");
-                 LogCombineHelper.print();
+                 LogCombineUtil.popNest();
+                 LogCombineUtil.info("after nest print:{}", "after");
+                 LogCombineUtil.print();
               }
       );
-      LogCombineHelper.print();
+      LogCombineUtil.print();
    }
 }
 ```
 
 4. 【new】If you want to use it in a non-blocking thread, call it manually in the method of the non-blocking thread
-   `LogCombineHelper.print()` to Implement log combine printing。
+   `LogCombineUtil.print()` to Implement log combine printing。
 
 ```java
 class Test2 {
 
    @SneakyThrows
    public void test2() {
-      LogCombineHelper.info("test:{},{}", 1, 2);
-      LogCombineHelper.debug("test2:{},{}", 3, 4);
+      LogCombineUtil.info("test:{},{}", 1, 2);
+      LogCombineUtil.debug("test2:{},{}", 3, 4);
       new Thread(
               () -> {
-                 LogCombineHelper.debug("test3:{}", 5);
+                 LogCombineUtil.debug("test3:{}", 5);
                  try {
                     Thread.sleep(4000);
                  } catch (InterruptedException e) {
                     e.printStackTrace();
                  }
                  //manual print
-                 LogCombineHelper.print();
+                 LogCombineUtil.print();
               }
       ).start();
       //manual print
-      LogCombineHelper.print();
+      LogCombineUtil.print();
    }
 }
 ```
@@ -137,7 +137,7 @@ class Test2 {
 ```
 
 2. add `@EnableLogCombine` to your application Entrance
-3. add `@LogCombine` on your method and use `LogCombineHelper` to add log info
+3. add `@LogCombine` on your method and use `LogCombineUtil` to add log info
 
 ```java
 
@@ -145,13 +145,13 @@ class Test {
     @LogCombine
     public void test() {
         // do something
-        LogCombineHelper.info("this is a test method, you can use it like {}", "logback");
+        LogCombineUtil.info("this is a test method, you can use it like {}", "logback");
     }
 }
 
 ```
 
-4. 【new】If you want to use it in a non-blocking thread, call `LogCombineHelper.print()` manually in the method of the
+4. 【new】If you want to use it in a non-blocking thread, call `LogCombineUtil.print()` manually in the method of the
    non-blocking thread to enable printing in the non-blocking thread.Or you can use it normally as if you were calling a
    method, provided you add the `@LogCombine` annotation to the method。【The two ways cannot be mixed】
 
@@ -167,8 +167,8 @@ class Test3 {
    @GetMapping("/spring")
    @SneakyThrows
    public void test() {
-      LogCombineHelper.info("test:{},{}", 1, 2);
-      LogCombineHelper.debug("test2:{},{}", 3, 4);
+      LogCombineUtil.info("test:{},{}", 1, 2);
+      LogCombineUtil.debug("test2:{},{}", 3, 4);
       executorService.execute(
               //LogCombine annotation
               () -> sampleService.test2()
@@ -176,8 +176,8 @@ class Test3 {
       executorService.execute(
               //manual print
               () -> {
-                 LogCombineHelper.info("service:{}", "manual print");
-                 LogCombineHelper.print();
+                 LogCombineUtil.info("service:{}", "manual print");
+                 LogCombineUtil.print();
               }
       );
    }
@@ -187,7 +187,7 @@ class Test3 {
 class SampleService {
    @LogCombine
    public void test2() {
-      LogCombineHelper.info("service:{}", 2);
+      LogCombineUtil.info("service:{}", 2);
    }
 }
 ```

@@ -19,7 +19,7 @@ package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.enums.LogLevel;
-import cn.beichenhpy.log.utils.LogCombineUtil;
+import cn.beichenhpy.log.utils.LogCombineInnerUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,7 +51,7 @@ public class LogCombineContext {
     }
 
     protected static ParsedPattern loadPattern() {
-        return LogCombineUtil.parsePattern(configuration.getPattern());
+        return LogCombineInnerUtil.parsePattern(configuration.getPattern());
     }
 
     /**
@@ -71,7 +71,7 @@ public class LogCombineContext {
      * @param param 可变长参数
      */
     public void addLog(String msg, LogLevel level, Object... param) {
-        String logMsg = LogCombineUtil.formatLog(parsedPattern, msg, level);
+        String logMsg = LogCombineInnerUtil.formatLog(parsedPattern, msg, level);
         String message = MessageFormatter.arrayFormat(logMsg, param).getMessage();
         LogInfo logInfo = getLogLocalStorage();
         if (logInfo == null) {

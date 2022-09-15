@@ -17,7 +17,7 @@
 
 package cn.beichenhpy.sample.controller;
 
-import cn.beichenhpy.log.LogCombineHelper;
+import cn.beichenhpy.log.LogCombineUtil;
 import cn.beichenhpy.log.annotation.LogCombine;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -49,8 +49,8 @@ public class SampleController {
     @LogCombine
     @GetMapping("/spring")
     public void test() throws ExecutionException, InterruptedException {
-        LogCombineHelper.debug("test:{},{}", 1, 2);
-        LogCombineHelper.warn("test2:{},{}", 3, 4);
+        LogCombineUtil.debug("test:{},{}", 1, 2);
+        LogCombineUtil.warn("test2:{},{}", 3, 4);
         //nest
         sampleService.test2();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -61,13 +61,13 @@ public class SampleController {
         executorService.execute(
                 //直接调用
                 () -> {
-                    LogCombineHelper.info("service:{}", "direct invoke");
-                    LogCombineHelper.print();
+                    LogCombineUtil.info("service:{}", "direct invoke");
+                    LogCombineUtil.print();
                 }
         );
         //but if you use submit and get result ,it works.
         Future<?> task = executorService.submit(
-                () -> LogCombineHelper.debug("test3:{}", 5)
+                () -> LogCombineUtil.debug("test3:{}", 5)
         );
         task.get();
     }
@@ -76,36 +76,36 @@ public class SampleController {
     @GetMapping("/no-spring")
     @SneakyThrows
     public void test2() {
-        LogCombineHelper.info("test:{},{}", 1, 2);
-        LogCombineHelper.warn("test2:{},{}", 3, 4);
+        LogCombineUtil.info("test:{},{}", 1, 2);
+        LogCombineUtil.warn("test2:{},{}", 3, 4);
         //LogCombine nested
-        LogCombineHelper.pushNest();
+        LogCombineUtil.pushNest();
         sampleService.test3();
-        LogCombineHelper.popNest();
+        LogCombineUtil.popNest();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         //support but you need to manual print
         executorService.execute(
                 () -> {
-                    LogCombineHelper.warn("test3:{}", 5);
+                    LogCombineUtil.warn("test3:{}", 5);
                     try {
                         Thread.sleep(4000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    LogCombineHelper.pushNest();
+                    LogCombineUtil.pushNest();
                     sampleService.test3();
-                    LogCombineHelper.popNest();
-                    LogCombineHelper.info("after nest print:{}", "after");
-                    LogCombineHelper.print();
+                    LogCombineUtil.popNest();
+                    LogCombineUtil.info("after nest print:{}", "after");
+                    LogCombineUtil.print();
                 }
         );
         //but if you use submit and get result ,it works.
         Future<?> task = executorService.submit(
-                () -> LogCombineHelper.debug("test3:{}", 5)
+                () -> LogCombineUtil.debug("test3:{}", 5)
         );
         task.get();
         //manual print
-        LogCombineHelper.print();
+        LogCombineUtil.print();
     }
 
     @GetMapping("parallel-test")
@@ -114,19 +114,19 @@ public class SampleController {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         executorService.execute(
                 () -> {
-                    LogCombineHelper.info("1test1");
-                    LogCombineHelper.info("1test1");
-                    LogCombineHelper.info("1test1");
-                    LogCombineHelper.print();
+                    LogCombineUtil.info("1test1");
+                    LogCombineUtil.info("1test1");
+                    LogCombineUtil.info("1test1");
+                    LogCombineUtil.print();
                 }
         );
         executorService.execute(
                 () -> {
-                    LogCombineHelper.info("2test2");
-                    LogCombineHelper.info("2test2");
-                    LogCombineHelper.info("2test2");
-                    LogCombineHelper.info("2test2");
-                    LogCombineHelper.print();
+                    LogCombineUtil.info("2test2");
+                    LogCombineUtil.info("2test2");
+                    LogCombineUtil.info("2test2");
+                    LogCombineUtil.info("2test2");
+                    LogCombineUtil.print();
                 }
         );
     }

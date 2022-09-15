@@ -1,6 +1,6 @@
 package cn.beichenhpy.log.config;
 
-import cn.beichenhpy.log.utils.LogCombineUtil;
+import cn.beichenhpy.log.utils.LogCombineInnerUtil;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -15,7 +15,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SpringLogCombineConfiguration {
 
     /**
-     * @see cn.beichenhpy.log.utils.LogCombineUtil#DEFAULT_PATTERN
+     * @see LogCombineInnerUtil#DEFAULT_PATTERN
      */
-    private String pattern = LogCombineUtil.DEFAULT_PATTERN;
+    private String pattern = LogCombineInnerUtil.DEFAULT_PATTERN;
 }

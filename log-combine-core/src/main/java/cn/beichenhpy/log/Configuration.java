@@ -19,7 +19,7 @@ package cn.beichenhpy.log;
 
 
 import cn.beichenhpy.log.entity.ParsedPattern;
-import cn.beichenhpy.log.utils.LogCombineUtil;
+import cn.beichenhpy.log.utils.LogCombineInnerUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,9 +38,9 @@ public class Configuration {
     /**
      * 日志格式
      *
-     * @see cn.beichenhpy.log.utils.LogCombineUtil#DEFAULT_PATTERN
+     * @see LogCombineInnerUtil#DEFAULT_PATTERN
      */
-    private String pattern = LogCombineUtil.DEFAULT_PATTERN;
+    private String pattern = LogCombineInnerUtil.DEFAULT_PATTERN;
 
     /**
      * 设置pattern 并重新初始化参数
