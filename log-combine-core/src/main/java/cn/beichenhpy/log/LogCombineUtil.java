@@ -18,7 +18,6 @@
 package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.enums.LogLevel;
-import cn.beichenhpy.log.utils.LogCombineInnerUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -43,7 +42,7 @@ public class LogCombineUtil {
      * 日志存储上下文
      */
     private static final LogCombineContext context = LogCombineContext.getContext();
-
+    private static final String CURLY = "{}";
 
     /**
      * 设置日志打印pattern
@@ -156,15 +155,15 @@ public class LogCombineUtil {
             String logMsg = context.getLog(true);
             if (logMsg != null) {
                 if (log.isTraceEnabled()) {
-                    log.trace(LogCombineInnerUtil.CURLY, logMsg);
+                    log.trace(CURLY, logMsg);
                 } else if (log.isDebugEnabled()) {
-                    log.debug(LogCombineInnerUtil.CURLY, logMsg);
+                    log.debug(CURLY, logMsg);
                 } else if (log.isInfoEnabled()) {
-                    log.info(LogCombineInnerUtil.CURLY, logMsg);
+                    log.info(CURLY, logMsg);
                 } else if (log.isWarnEnabled()) {
-                    log.warn(LogCombineInnerUtil.CURLY, logMsg);
+                    log.warn(CURLY, logMsg);
                 } else if (log.isErrorEnabled()) {
-                    log.error(LogCombineInnerUtil.CURLY, logMsg);
+                    log.error(CURLY, logMsg);
                 }
             }
         }

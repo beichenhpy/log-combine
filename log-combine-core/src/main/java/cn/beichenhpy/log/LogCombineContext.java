@@ -17,13 +17,17 @@
 
 package cn.beichenhpy.log;
 
-import cn.beichenhpy.log.entity.ParsedPattern;
 import cn.beichenhpy.log.enums.LogLevel;
-import cn.beichenhpy.log.utils.LogCombineInnerUtil;
+import cn.beichenhpy.log.parser.ParseUtil;
+import cn.beichenhpy.log.parser.ParserHelper;
+import cn.beichenhpy.log.parser.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.slf4j.helpers.MessageFormatter;
+
+import java.util.List;
 
 /**
  * 合并打印上下文
@@ -38,20 +42,14 @@ public class LogCombineContext {
     private LogCombineContext() {
     }
 
+    @Getter
     private static final Configuration configuration = new Configuration();
 
-    private static final ParsedPattern parsedPattern = loadPattern();
+    @Getter
+    private static final List<Pattern> parsedPatternList = loadPattern();
 
-    protected static Configuration getConfiguration() {
-        return LogCombineContext.configuration;
-    }
-
-    protected static ParsedPattern getParsedPattern() {
-        return LogCombineContext.parsedPattern;
-    }
-
-    protected static ParsedPattern loadPattern() {
-        return LogCombineInnerUtil.parsePattern(configuration.getPattern());
+    protected static List<Pattern> loadPattern() {
+        return new ParserHelper().parse(configuration.getPattern());
     }
 
     /**
@@ -71,7 +69,7 @@ public class LogCombineContext {
      * @param param 可变长参数
      */
     public void addLog(String msg, LogLevel level, Object... param) {
-        String logMsg = LogCombineInnerUtil.formatLog(parsedPattern, msg, level);
+        String logMsg = ParseUtil.formatLog(parsedPatternList, msg, level);
         String message = MessageFormatter.arrayFormat(logMsg, param).getMessage();
         LogInfo logInfo = getLogLocalStorage();
         if (logInfo == null) {

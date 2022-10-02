@@ -18,11 +18,13 @@
 package cn.beichenhpy.log;
 
 
-import cn.beichenhpy.log.entity.ParsedPattern;
-import cn.beichenhpy.log.utils.LogCombineInnerUtil;
+import cn.beichenhpy.log.parser.ParseUtil;
+import cn.beichenhpy.log.parser.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * 配置文件
@@ -37,23 +39,21 @@ public class Configuration {
 
     /**
      * 日志格式
-     *
-     * @see LogCombineInnerUtil#DEFAULT_PATTERN
      */
-    private String pattern = LogCombineInnerUtil.DEFAULT_PATTERN;
+    private String pattern = ParseUtil.DEFAULT_PATTERN;
 
     /**
      * 设置pattern 并重新初始化参数
      *
      * @param pattern 日志格式
      */
-    protected void setPattern(String pattern) {
-        this.pattern = pattern;
-        ParsedPattern newParsedPattern = LogCombineContext.loadPattern();
-        ParsedPattern parsedPattern = LogCombineContext.getParsedPattern();
-        parsedPattern.setLogFormat(newParsedPattern.getLogFormat());
-        parsedPattern.setKeyWords(newParsedPattern.getKeyWords());
-        parsedPattern.setLoggerLengths(newParsedPattern.getLoggerLengths());
-        parsedPattern.setDateTimeFormatters(newParsedPattern.getDateTimeFormatters());
+    protected synchronized void setPattern(String pattern) {
+        if (pattern != null) {
+            this.pattern = pattern;
+        }
+        List<Pattern> parsedPatternList = LogCombineContext.getParsedPatternList();
+        parsedPatternList.clear();
+        List<Pattern> patternList = LogCombineContext.loadPattern();
+        parsedPatternList.addAll(patternList);
     }
 }
