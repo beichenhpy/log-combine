@@ -52,7 +52,11 @@ public class ParserHelper {
         saveKeyWord(keyWordBuf, formatBuf);
         for (Pattern item : patternList) {
             if (item.getType() == KEY_TYPE) {
-                item.setConverter(ParseUtil.KEYWORD_CONVERTER_CACHE.get(item.getText()));
+                Converter converter = ParseUtil.KEYWORD_CONVERTER_CACHE.get(item.getText());
+                if (converter == null) {
+                    throw new IllegalArgumentException("[LOG-COMBINE]: 您输入的关键字[" + item.getText() + "]不存在, 请确认是否输入正确。");
+                }
+                item.setConverter(converter);
             }
         }
         return patternList;
@@ -112,6 +116,7 @@ public class ParserHelper {
                 break;
             case LEFT_CURLY_CHAR:
                 state = ParseState.FORMAT_STATE;
+                break;
             default:
                 letterBuf.append(c);
                 break;
