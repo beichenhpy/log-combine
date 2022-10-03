@@ -15,35 +15,25 @@ public class ParseUtil {
 
     //public
     public static final String DEFAULT_PATTERN = "%date{yyyy-MM-dd HH:mm:ss,SSS}  %level %pid --- [%thread]  %logger{35} - [%line] :%msg";
-    public static final List<Pattern> DEFAULT_PATTERN_LIST = new ParserHelper().parse(DEFAULT_PATTERN);
-    protected static final String LOG_KEY_WORD_PID = "pid";
-    protected static final String LOG_KEY_WORD_THREAD = "thread";
-    protected static final String LOG_KEY_WORD_LEVEL = "level";
-    protected static final String LOG_KEY_WORD_LINE = "line";
-    protected static final String LOG_KEY_WORD_MSG = "msg";
-    protected static final String LOG_KEY_WORD_DATE = "date";
-    protected static final String LOG_KEY_WORD_LOGGER = "logger";
-    protected static final Map<String, Converter> KEYWORD_CONVERTER_CACHE = new HashMap<>(2);
-    protected static final String DEFAULT_DATETIME_FORMATTER_STR = "yyyy-MM-dd HH:mm:ss,SSS";
-    protected static final DateTimeFormatter DEFAULT_DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATETIME_FORMATTER_STR);
-    protected static final Map<String, DateTimeFormatter> DATE_TIME_FORMATTER_CACHE = new HashMap<>(8);
-    protected static final int DEFAULT_LOGGER_LENGTH = 35;
-
-    static {
-        KEYWORD_CONVERTER_CACHE.put(LOG_KEY_WORD_DATE, new DateConverter());
-        KEYWORD_CONVERTER_CACHE.put(LOG_KEY_WORD_LOGGER, new LoggerConverter());
-        KEYWORD_CONVERTER_CACHE.put(LOG_KEY_WORD_PID, new PidConverter());
-        KEYWORD_CONVERTER_CACHE.put(LOG_KEY_WORD_THREAD, new ThreadConverter());
-        KEYWORD_CONVERTER_CACHE.put(LOG_KEY_WORD_LEVEL, new LevelConverter());
-        KEYWORD_CONVERTER_CACHE.put(LOG_KEY_WORD_LINE, new LineConverter());
-        KEYWORD_CONVERTER_CACHE.put(LOG_KEY_WORD_MSG, new MsgConverter());
-    }
+    public static final String LOG_KEY_WORD_PID = "pid";
+    public static final String LOG_KEY_WORD_THREAD = "thread";
+    public static final String LOG_KEY_WORD_LEVEL = "level";
+    public static final String LOG_KEY_WORD_LINE = "line";
+    public static final String LOG_KEY_WORD_MSG = "msg";
+    public static final String LOG_KEY_WORD_DATE = "date";
+    public static final String LOG_KEY_WORD_LOGGER = "logger";
+    public static final String LOG_KEY_WORD_LINE_SEPARATOR = "n";
+    public static final String DEFAULT_DATETIME_FORMATTER_STR = "yyyy-MM-dd HH:mm:ss,SSS";
+    public static final Map<String, DateTimeFormatter> DATE_TIME_FORMATTER_CACHE = new HashMap<>(8);
+    public static final DateTimeFormatter DEFAULT_DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATETIME_FORMATTER_STR);
+    public static final int DEFAULT_LOGGER_LENGTH = 35;
 
     static {
         DATE_TIME_FORMATTER_CACHE.put(DEFAULT_DATETIME_FORMATTER_STR, DEFAULT_DATETIME_FORMATTER);
     }
 
-    protected static DateTimeFormatter getDateTimeFormatter(String pattern) {
+
+    public static DateTimeFormatter getDateTimeFormatter(String pattern) {
         if (pattern == null) {
             return DEFAULT_DATETIME_FORMATTER;
         }
@@ -61,7 +51,7 @@ public class ParseUtil {
     }
 
 
-    protected static int getLoggerLength(String length) {
+    public static int getLoggerLength(String length) {
         if (length == null) {
             return DEFAULT_LOGGER_LENGTH;
         }

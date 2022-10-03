@@ -51,10 +51,7 @@ public class ParserHelper {
         addKeywordValue(keyWordBuf, formatBuf, patternList);
         for (Pattern item : patternList) {
             if (item.getType() == KEY_TYPE) {
-                Converter converter = ParseUtil.KEYWORD_CONVERTER_CACHE.get(item.getText());
-                if (converter == null) {
-                    throw new IllegalArgumentException("[LOG-COMBINE]: 您输入的关键字[" + item.getText() + "]不存在, 请确认是否输入正确。");
-                }
+                Converter converter = ConvertUtil.getConverter(item.getText());
                 item.setConverter(converter);
             }
         }

@@ -19,6 +19,7 @@ package cn.beichenhpy.log;
 
 import cn.beichenhpy.log.enums.LogLevel;
 import cn.beichenhpy.log.parser.ParseUtil;
+import cn.beichenhpy.log.parser.ParserHelper;
 import cn.beichenhpy.log.parser.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,7 +46,7 @@ public class LogCombineContext {
     private static final Configuration configuration = new Configuration();
 
     @Getter
-    private static final List<Pattern> parsedPatternList = ParseUtil.DEFAULT_PATTERN_LIST;
+    private static final List<Pattern> parsedPatternList = new ParserHelper().parse(ParseUtil.DEFAULT_PATTERN);
 
     /**
      * 获取上下文

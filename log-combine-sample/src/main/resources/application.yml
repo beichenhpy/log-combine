@@ -3,4 +3,4 @@ logging:
     cn.beichenhpy.log: info
 
 log-combine:
-  pattern: '日期%date{yyyy-MM-dd}--时分秒%date{}--[%line] - 1[%thread] 2[%thread] %level 78长度%logger{78} 默认长度%logger - %msg'
+  pattern: '日期%date{yyyy-MM-dd}--时分秒%n%date{}--[%line] - 1[%thread] 2[%thread] %level 78长度%logger{78} 默认长度%logger - %msg'
