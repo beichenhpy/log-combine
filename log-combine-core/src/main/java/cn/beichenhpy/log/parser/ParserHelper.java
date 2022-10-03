@@ -1,11 +1,11 @@
 package cn.beichenhpy.log.parser;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 不要设置为单例模式，该类是多例的
+ *
  * @author beichenhpy
  * <p> 2022/10/2 16:03
  */
@@ -16,8 +16,6 @@ public class ParserHelper {
     protected static final char RIGHT_CURLY_CHAR = '}';
     protected static final int KEY_TYPE = 1;
     protected static final int LITERAL_TYPE = 0;
-    @Getter
-    private final List<Pattern> patternList = new ArrayList<>();
     /**
      * 解析状态
      */
@@ -33,23 +31,24 @@ public class ParserHelper {
         StringBuffer literalBuf = new StringBuffer();
         StringBuffer keyWordBuf = new StringBuffer();
         StringBuffer formatBuf = new StringBuffer();
+        List<Pattern> patternList = new ArrayList<>();
         while (pointer < pattern.length()) {
             char c = pattern.charAt(pointer);
             switch (state) {
                 case LITERAL_STATE:
-                    handleLiteral(keyWordBuf, formatBuf, literalBuf, c);
-                    break;
-                case FORMAT_STATE:
-                    handleFormat(keyWordBuf, formatBuf, c);
+                    handleLiteral(literalBuf, keyWordBuf, formatBuf, c, patternList);
                     break;
                 case KEY_WORD_STATE:
-                    handleKeyWord(literalBuf, keyWordBuf, formatBuf, c);
+                    handleKeyWord(literalBuf, keyWordBuf, formatBuf, c, patternList);
+                    break;
+                case FORMAT_STATE:
+                    handleFormat(keyWordBuf, formatBuf, c, patternList);
                     break;
             }
             pointer++;
         }
-        saveLiteral(literalBuf);
-        saveKeyWord(keyWordBuf, formatBuf);
+        addLiteralValue(literalBuf, patternList);
+        addKeywordValue(keyWordBuf, formatBuf, patternList);
         for (Pattern item : patternList) {
             if (item.getType() == KEY_TYPE) {
                 Converter converter = ParseUtil.KEYWORD_CONVERTER_CACHE.get(item.getText());
@@ -65,21 +64,21 @@ public class ParserHelper {
     /**
      * 处理关键字类
      *
-     * @param literalBuf 字符缓冲
-     * @param keyWordBuf 关键字缓冲
-     * @param formatBuf  格式化缓冲
-     * @param c          当前字符
+     * @param literalBuf  字符缓冲
+     * @param keyWordBuf  关键字缓冲
+     * @param formatBuf   格式化缓冲
+     * @param c           当前字符
+     * @param patternList 解析后的格式集合
      */
-    private void handleKeyWord(StringBuffer literalBuf, StringBuffer keyWordBuf, StringBuffer formatBuf, char c) {
-        // %
+    private void handleKeyWord(StringBuffer literalBuf, StringBuffer keyWordBuf, StringBuffer formatBuf, char c, List<Pattern> patternList) {
         //保存文字
-        saveLiteral(literalBuf);
+        addLiteralValue(literalBuf, patternList);
         switch (c) {
             case LEFT_CURLY_CHAR:
                 state = ParseState.FORMAT_STATE;
                 break;
             case PERCENT_CHAR:
-                saveKeyWord(keyWordBuf, formatBuf);
+                addKeywordValue(keyWordBuf, formatBuf, patternList);
                 break;
             default:
                 if (!Character.isJavaIdentifierPart(c)) {
@@ -92,10 +91,17 @@ public class ParserHelper {
         }
     }
 
-    private void handleFormat(StringBuffer keyWordBuf, StringBuffer formatBuf, char c) {
-        // {
+    /**
+     * 处理格式化数据
+     *
+     * @param keyWordBuf  关键字缓冲
+     * @param formatBuf   格式化缓冲
+     * @param c           当前字符
+     * @param patternList 解析后的格式集合
+     */
+    private void handleFormat(StringBuffer keyWordBuf, StringBuffer formatBuf, char c, List<Pattern> patternList) {
         if (c == RIGHT_CURLY_CHAR) {
-            saveKeyWord(keyWordBuf, formatBuf);
+            addKeywordValue(keyWordBuf, formatBuf, patternList);
             state = ParseState.LITERAL_STATE;
         } else {
             formatBuf.append(c);
@@ -103,27 +109,31 @@ public class ParserHelper {
     }
 
     /**
-     * 处理字符类数据
+     * 处理文字类数据
      *
-     * @param letterBuf 字符缓冲
-     * @param c         当前字符
+     * @param literalBuf  文字缓冲
+     * @param keyWordBuf  关键字缓冲
+     * @param formatBuf   格式化缓冲
+     * @param c           当前字符
+     * @param patternList 解析格式集合
      */
-    private void handleLiteral(StringBuffer keyWordBuf, StringBuffer formatBuf, StringBuffer letterBuf, char c) {
+    private void handleLiteral(StringBuffer literalBuf, StringBuffer keyWordBuf, StringBuffer formatBuf, char c, List<Pattern> patternList) {
         if (c == PERCENT_CHAR) {
-            saveKeyWord(keyWordBuf, formatBuf);
+            addKeywordValue(keyWordBuf, formatBuf, patternList);
             state = ParseState.KEY_WORD_STATE;
         } else {
-            letterBuf.append(c);
+            literalBuf.append(c);
         }
     }
 
     /**
      * 保存关键字
      *
-     * @param keyWordBuf 关键字缓冲
-     * @param formatBuf  格式化缓冲
+     * @param keyWordBuf  关键字缓冲
+     * @param formatBuf   格式化缓冲
+     * @param patternList 解析格式集合
      */
-    private void saveKeyWord(StringBuffer keyWordBuf, StringBuffer formatBuf) {
+    private void addKeywordValue(StringBuffer keyWordBuf, StringBuffer formatBuf, List<Pattern> patternList) {
         if (keyWordBuf.length() > 0) {
             String format = null;
             if (formatBuf.length() > 0) {
@@ -138,9 +148,10 @@ public class ParserHelper {
     /**
      * 保存letter类型的数据
      *
-     * @param literalBuf letter类型缓冲
+     * @param literalBuf  letter类型缓冲
+     * @param patternList 解析格式集合
      */
-    private void saveLiteral(StringBuffer literalBuf) {
+    private void addLiteralValue(StringBuffer literalBuf, List<Pattern> patternList) {
         if (literalBuf.length() > 0) {
             patternList.add(new Pattern(literalBuf.toString(), LITERAL_TYPE, null, null));
             literalBuf.setLength(0);

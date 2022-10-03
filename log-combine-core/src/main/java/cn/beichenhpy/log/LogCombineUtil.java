@@ -49,7 +49,7 @@ public class LogCombineUtil {
      *
      * @param pattern 格式
      */
-    public static void setPattern(String pattern) {
+    public static void compile(String pattern) {
         LogCombineContext.getConfiguration().setPattern(pattern);
     }
 

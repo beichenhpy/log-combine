@@ -42,7 +42,7 @@ public class LogCombineAutoConfig {
     public LogCombinePrintAspect logCombinePrintAspect() {
         //init pattern
         if (StringUtils.hasText(springLogCombineConfiguration().getPattern())) {
-            LogCombineUtil.setPattern(springLogCombineConfiguration().getPattern());
+            LogCombineUtil.compile(springLogCombineConfiguration().getPattern());
         }
         return new LogCombinePrintAspect();
     }

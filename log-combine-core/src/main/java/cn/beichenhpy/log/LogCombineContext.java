@@ -46,11 +46,7 @@ public class LogCombineContext {
     private static final Configuration configuration = new Configuration();
 
     @Getter
-    private static final List<Pattern> parsedPatternList = loadPattern();
-
-    protected static List<Pattern> loadPattern() {
-        return new ParserHelper().parse(configuration.getPattern());
-    }
+    private static final List<Pattern> parsedPatternList = new ParserHelper().parse(ParseUtil.DEFAULT_PATTERN);
 
     /**
      * 获取上下文
