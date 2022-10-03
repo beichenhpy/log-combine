@@ -3,7 +3,7 @@ package cn.beichenhpy.log.parser;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cn.beichenhpy.log.parser.ParseUtil.*;
+import static cn.beichenhpy.log.LogCombineConstants.*;
 
 /**
  * @author beichenhpy
@@ -11,7 +11,7 @@ import static cn.beichenhpy.log.parser.ParseUtil.*;
  */
 public class ConvertUtil {
 
-    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     public static final Map<String, Converter> KEYWORD_CONVERTER_CACHE = new HashMap<>(16);
 
     static {

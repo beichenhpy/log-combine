@@ -1,5 +1,7 @@
 package cn.beichenhpy.log.parser;
 
+import cn.beichenhpy.log.LogCombineConstants;
+
 import java.lang.management.ManagementFactory;
 
 /**
@@ -8,12 +10,11 @@ import java.lang.management.ManagementFactory;
  */
 public class PidConverter implements Converter {
 
-    public static final String AT = "@";
 
     @Override
-    public String convert(String text, String format) {
+    public String convert(String value, String format) {
         String name = ManagementFactory.getRuntimeMXBean().getName();
-        String[] names = name.split(AT);
+        String[] names = name.split(LogCombineConstants.AT);
         return names[0];
     }
 }

@@ -6,5 +6,5 @@ package cn.beichenhpy.log.parser;
  */
 public interface Converter {
 
-    String convert(String text, String format);
+    String convert(String value, String format);
 }

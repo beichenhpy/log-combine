@@ -23,6 +23,6 @@ package cn.beichenhpy.log.enums;
  */
 public enum LogLevel {
 
-    TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
+    TRACE, DEBUG, INFO, WARN, ERROR
 
 }

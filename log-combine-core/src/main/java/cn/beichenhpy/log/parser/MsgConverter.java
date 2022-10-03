@@ -6,7 +6,7 @@ package cn.beichenhpy.log.parser;
  */
 public class MsgConverter implements Converter {
     @Override
-    public String convert(String text, String format) {
-        return text;
+    public String convert(String value, String format) {
+        return value;
     }
 }

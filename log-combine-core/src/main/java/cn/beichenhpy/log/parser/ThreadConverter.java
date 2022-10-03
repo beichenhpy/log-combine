@@ -7,7 +7,7 @@ package cn.beichenhpy.log.parser;
 public class ThreadConverter implements Converter {
 
     @Override
-    public String convert(String text, String format) {
+    public String convert(String value, String format) {
         return Thread.currentThread().getName();
     }
 }

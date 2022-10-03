@@ -18,7 +18,6 @@
 package cn.beichenhpy.log;
 
 
-import cn.beichenhpy.log.parser.ParseUtil;
 import cn.beichenhpy.log.parser.ParserHelper;
 import cn.beichenhpy.log.parser.Pattern;
 import lombok.AllArgsConstructor;
@@ -41,7 +40,7 @@ public class Configuration {
     /**
      * 日志格式
      */
-    private String pattern = ParseUtil.DEFAULT_PATTERN;
+    private String pattern = LogCombineConstants.DEFAULT_PATTERN;
 
 
     /**

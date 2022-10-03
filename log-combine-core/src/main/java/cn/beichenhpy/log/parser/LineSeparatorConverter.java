@@ -1,5 +1,7 @@
 package cn.beichenhpy.log.parser;
 
+import cn.beichenhpy.log.LogCombineConstants;
+
 /**
  * @author beichenhpy
  * <p> 2022/10/3 20:56
@@ -7,7 +9,7 @@ package cn.beichenhpy.log.parser;
 public class LineSeparatorConverter implements Converter {
 
     @Override
-    public String convert(String text, String format) {
-        return ConvertUtil.LINE_SEPARATOR;
+    public String convert(String value, String format) {
+        return LogCombineConstants.LINE_SEPARATOR;
     }
 }
