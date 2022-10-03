@@ -15,6 +15,7 @@ public class ParseUtil {
 
     //public
     public static final String DEFAULT_PATTERN = "%date{yyyy-MM-dd HH:mm:ss,SSS}  %level %pid --- [%thread]  %logger{35} - [%line] :%msg";
+    public static final List<Pattern> DEFAULT_PATTERN_LIST = new ParserHelper().parse(DEFAULT_PATTERN);
     protected static final String LOG_KEY_WORD_PID = "pid";
     protected static final String LOG_KEY_WORD_THREAD = "thread";
     protected static final String LOG_KEY_WORD_LEVEL = "level";
