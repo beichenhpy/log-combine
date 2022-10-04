@@ -6,6 +6,8 @@ import java.util.Map;
 import static cn.beichenhpy.log.LogCombineConstants.*;
 
 /**
+ * 转换工具类，存放关键字对应的转换器
+ *
  * @author beichenhpy
  * <p> 2022/10/3 20:46
  */

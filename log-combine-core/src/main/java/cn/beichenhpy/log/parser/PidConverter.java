@@ -12,7 +12,7 @@ public class PidConverter implements Converter {
 
 
     @Override
-    public String convert(String value, String format) {
+    public String convert(String value, String option) {
         String name = ManagementFactory.getRuntimeMXBean().getName();
         String[] names = name.split(LogCombineConstants.AT);
         return names[0];

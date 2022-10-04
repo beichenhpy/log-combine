@@ -6,7 +6,7 @@ package cn.beichenhpy.log.parser;
  */
 public class LineConverter implements Converter {
     @Override
-    public String convert(String value, String format) {
+    public String convert(String value, String option) {
         return String.valueOf(Thread.currentThread().getStackTrace()[5].getLineNumber());
     }
 }

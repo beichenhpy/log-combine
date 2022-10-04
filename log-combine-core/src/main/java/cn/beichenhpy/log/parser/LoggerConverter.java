@@ -40,8 +40,8 @@ public class LoggerConverter implements Converter {
     }
 
     @Override
-    public String convert(String value, String format) {
-        int loggerLength = ParseUtil.getLoggerLength(format);
+    public String convert(String value, String option) {
+        int loggerLength = ParseUtil.getLoggerLength(option);
         return curtailReference(Thread.currentThread().getStackTrace()[5].getClassName(), loggerLength);
     }
 }

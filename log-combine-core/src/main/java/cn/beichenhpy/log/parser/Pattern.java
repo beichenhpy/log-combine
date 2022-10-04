@@ -15,9 +15,11 @@ public class Pattern {
 
     private String text;
 
+    //类型 关键字或文字
     private int type;
 
-    private String format;
+    //附加的一些选项 在 {} 中配置
+    private String option;
 
     private Converter converter;
 }

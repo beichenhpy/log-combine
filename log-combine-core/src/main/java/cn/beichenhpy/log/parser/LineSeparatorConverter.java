@@ -9,7 +9,7 @@ import cn.beichenhpy.log.LogCombineConstants;
 public class LineSeparatorConverter implements Converter {
 
     @Override
-    public String convert(String value, String format) {
+    public String convert(String value, String option) {
         return LogCombineConstants.LINE_SEPARATOR;
     }
 }

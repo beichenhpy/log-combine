@@ -6,5 +6,12 @@ package cn.beichenhpy.log.parser;
  */
 public interface Converter {
 
-    String convert(String value, String format);
+    /**
+     * 转换
+     *
+     * @param value  输入值
+     * @param option 格式化选项
+     * @return 返回转换后的字符串
+     */
+    String convert(String value, String option);
 }

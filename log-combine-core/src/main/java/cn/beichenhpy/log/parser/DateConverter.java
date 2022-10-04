@@ -10,8 +10,8 @@ import java.time.format.DateTimeFormatter;
 public class DateConverter implements Converter {
 
     @Override
-    public String convert(String value, String format) {
-        DateTimeFormatter df = DateFormatterUtil.getDateTimeFormatter(format);
+    public String convert(String value, String option) {
+        DateTimeFormatter df = DateFormatterUtil.getDateTimeFormatter(option);
         return df.format(LocalDateTime.now());
     }
 }

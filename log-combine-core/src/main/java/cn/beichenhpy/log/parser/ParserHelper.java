@@ -29,26 +29,26 @@ public class ParserHelper {
     public List<Pattern> parse(String pattern) {
         int pointer = 0;
         StringBuffer literalBuf = new StringBuffer();
-        StringBuffer keyWordBuf = new StringBuffer();
-        StringBuffer formatBuf = new StringBuffer();
+        StringBuffer keywordBuf = new StringBuffer();
+        StringBuffer optionBuf = new StringBuffer();
         List<Pattern> patternList = new ArrayList<>();
         while (pointer < pattern.length()) {
             char c = pattern.charAt(pointer);
             switch (state) {
                 case LITERAL_STATE:
-                    handleLiteral(literalBuf, keyWordBuf, formatBuf, c, patternList);
+                    handleLiteralState(literalBuf, keywordBuf, optionBuf, c, patternList);
                     break;
                 case KEY_WORD_STATE:
-                    handleKeyWord(literalBuf, keyWordBuf, formatBuf, c, patternList);
+                    handleKeywordState(literalBuf, keywordBuf, optionBuf, c, patternList);
                     break;
-                case FORMAT_STATE:
-                    handleFormat(keyWordBuf, formatBuf, c, patternList);
+                case OPTION_STATE:
+                    handleOptionState(keywordBuf, optionBuf, c, patternList);
                     break;
             }
             pointer++;
         }
         addLiteralValue(literalBuf, patternList);
-        addKeywordValue(keyWordBuf, formatBuf, patternList);
+        addKeywordValue(keywordBuf, optionBuf, patternList);
         for (Pattern item : patternList) {
             if (item.getType() == KEY_TYPE) {
                 Converter converter = ConvertUtil.getConverter(item.getText());
@@ -62,27 +62,27 @@ public class ParserHelper {
      * 处理关键字类
      *
      * @param literalBuf  字符缓冲
-     * @param keyWordBuf  关键字缓冲
-     * @param formatBuf   格式化缓冲
+     * @param keywordBuf  关键字缓冲
+     * @param optionBuf   格式化缓冲
      * @param c           当前字符
      * @param patternList 解析后的格式集合
      */
-    private void handleKeyWord(StringBuffer literalBuf, StringBuffer keyWordBuf, StringBuffer formatBuf, char c, List<Pattern> patternList) {
+    private void handleKeywordState(StringBuffer literalBuf, StringBuffer keywordBuf, StringBuffer optionBuf, char c, List<Pattern> patternList) {
         //保存文字
         addLiteralValue(literalBuf, patternList);
         switch (c) {
             case LEFT_CURLY_CHAR:
-                state = ParseState.FORMAT_STATE;
+                state = ParseState.OPTION_STATE;
                 break;
             case PERCENT_CHAR:
-                addKeywordValue(keyWordBuf, formatBuf, patternList);
+                addKeywordValue(keywordBuf, optionBuf, patternList);
                 break;
             default:
-                if (!Character.isJavaIdentifierPart(c)) {
+                if (Character.isJavaIdentifierPart(c)) {
+                    keywordBuf.append(c);
+                } else {
                     state = ParseState.LITERAL_STATE;
                     literalBuf.append(c);
-                } else {
-                    keyWordBuf.append(c);
                 }
                 break;
         }
@@ -91,17 +91,17 @@ public class ParserHelper {
     /**
      * 处理格式化数据
      *
-     * @param keyWordBuf  关键字缓冲
-     * @param formatBuf   格式化缓冲
+     * @param keywordBuf  关键字缓冲
+     * @param optionBuf   格式化缓冲
      * @param c           当前字符
      * @param patternList 解析后的格式集合
      */
-    private void handleFormat(StringBuffer keyWordBuf, StringBuffer formatBuf, char c, List<Pattern> patternList) {
+    private void handleOptionState(StringBuffer keywordBuf, StringBuffer optionBuf, char c, List<Pattern> patternList) {
         if (c == RIGHT_CURLY_CHAR) {
-            addKeywordValue(keyWordBuf, formatBuf, patternList);
+            addKeywordValue(keywordBuf, optionBuf, patternList);
             state = ParseState.LITERAL_STATE;
         } else {
-            formatBuf.append(c);
+            optionBuf.append(c);
         }
     }
 
@@ -109,14 +109,14 @@ public class ParserHelper {
      * 处理文字类数据
      *
      * @param literalBuf  文字缓冲
-     * @param keyWordBuf  关键字缓冲
-     * @param formatBuf   格式化缓冲
+     * @param keywordBuf  关键字缓冲
+     * @param optionBuf   格式化缓冲
      * @param c           当前字符
      * @param patternList 解析格式集合
      */
-    private void handleLiteral(StringBuffer literalBuf, StringBuffer keyWordBuf, StringBuffer formatBuf, char c, List<Pattern> patternList) {
+    private void handleLiteralState(StringBuffer literalBuf, StringBuffer keywordBuf, StringBuffer optionBuf, char c, List<Pattern> patternList) {
         if (c == PERCENT_CHAR) {
-            addKeywordValue(keyWordBuf, formatBuf, patternList);
+            addKeywordValue(keywordBuf, optionBuf, patternList);
             state = ParseState.KEY_WORD_STATE;
         } else {
             literalBuf.append(c);
@@ -126,19 +126,19 @@ public class ParserHelper {
     /**
      * 保存关键字
      *
-     * @param keyWordBuf  关键字缓冲
-     * @param formatBuf   格式化缓冲
+     * @param keywordBuf  关键字缓冲
+     * @param optionBuf   格式化缓冲
      * @param patternList 解析格式集合
      */
-    private void addKeywordValue(StringBuffer keyWordBuf, StringBuffer formatBuf, List<Pattern> patternList) {
-        if (keyWordBuf.length() > 0) {
-            String format = null;
-            if (formatBuf.length() > 0) {
-                format = formatBuf.toString();
-                formatBuf.setLength(0);
+    private void addKeywordValue(StringBuffer keywordBuf, StringBuffer optionBuf, List<Pattern> patternList) {
+        if (keywordBuf.length() > 0) {
+            String option = null;
+            if (optionBuf.length() > 0) {
+                option = optionBuf.toString();
+                optionBuf.setLength(0);
             }
-            patternList.add(new Pattern(keyWordBuf.toString(), KEY_TYPE, format, null));
-            keyWordBuf.setLength(0);
+            patternList.add(new Pattern(keywordBuf.toString(), KEY_TYPE, option, null));
+            keywordBuf.setLength(0);
         }
     }
 
@@ -156,7 +156,7 @@ public class ParserHelper {
     }
 
     enum ParseState {
-        LITERAL_STATE, KEY_WORD_STATE, FORMAT_STATE
+        LITERAL_STATE, KEY_WORD_STATE, OPTION_STATE
     }
 
 

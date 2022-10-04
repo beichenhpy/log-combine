@@ -30,14 +30,14 @@ public class ParseUtil {
         for (Pattern pattern : patternList) {
             if (pattern.getConverter() != null) {
                 if (pattern.getText().equals(LOG_KEY_WORD_MSG)) {
-                    buffer.append(pattern.getConverter().convert(msg, pattern.getFormat()));
+                    buffer.append(pattern.getConverter().convert(msg, pattern.getOption()));
                     continue;
                 }
                 if (pattern.getText().equals(LOG_KEY_WORD_LEVEL)) {
-                    buffer.append(pattern.getConverter().convert(level.toString(), pattern.getFormat()));
+                    buffer.append(pattern.getConverter().convert(level.toString(), pattern.getOption()));
                     continue;
                 }
-                buffer.append(pattern.getConverter().convert(pattern.getText(), pattern.getFormat()));
+                buffer.append(pattern.getConverter().convert(pattern.getText(), pattern.getOption()));
             } else {
                 buffer.append(pattern.getText());
             }
